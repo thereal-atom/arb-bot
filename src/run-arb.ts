@@ -28,34 +28,34 @@ const wallet = new Wallet(
 );
 
 setInterval(async () => {
-	const log: Log = {
-		id: randomUUIDv7(),
-		timestamp: Date.now(),
-		errorLogs: [],
-	};
+	// const log: Log = {
+	// 	id: randomUUIDv7(),
+	// 	timestamp: Date.now(),
+	// 	errorLogs: [],
+	// };
 
 	try {
 		const performance = trackPerformance("checking-for-profit");
 
 		const uiAmountSol = 0.4;
 
-		log.inAmountLamports = uiAmountSol * 10 ** 9;
+		// log.inAmountLamports = uiAmountSol * 10 ** 9;
 
 		const { quote, reverseQuote } = await getArbitrageQuotes(jupiter, {
 			mintB: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
 			uiAmountSol,
 		});
 
-		log.quotes = {
-			quote: {
-				fetchedAt: Date.now(),
-				quote: quote,
-			},
-			reverseQuote: {
-				fetchedAt: Date.now(),
-				quote: reverseQuote,
-			},
-		};
+		// log.quotes = {
+		// 	quote: {
+		// 		fetchedAt: Date.now(),
+		// 		quote: quote,
+		// 	},
+		// 	reverseQuote: {
+		// 		fetchedAt: Date.now(),
+		// 		quote: reverseQuote,
+		// 	},
+		// };
 
 		performance.event("got-quote");
 
@@ -64,7 +64,7 @@ setInterval(async () => {
 			reverseQuote,
 		);
 
-		log.calculatedProfitLamports = profitLamports;
+		// log.calculatedProfitLamports = profitLamports;
 
 		console.log(
 			`${quote.inAmount} → ${reverseQuote.outAmount} SOL (${profitLamports.toFixed(5)} lamports, ${profitPercent}%)`,
@@ -72,11 +72,11 @@ setInterval(async () => {
 
 		const jitoTip = Math.min(Math.floor(profitLamports / 2), 1_000_000);
 
-		log.calculatedJitoTip = jitoTip;
+		// log.calculatedJitoTip = jitoTip;
 
 		const threshold = 100_000;
 		if (profitLamports < threshold) {
-			saveLog(log);
+			// saveLog(log);
 
 			return;
 		}
@@ -94,10 +94,10 @@ setInterval(async () => {
 			combinedQuote,
 		);
 
-		log.jupiterSwapTransactionInstructions = {
-			fetchedAt: Date.now(),
-			instructions: instructions,
-		};
+		// log.jupiterSwapTransactionInstructions = {
+		// 	fetchedAt: Date.now(),
+		// 	instructions: instructions,
+		// };
 
 		performance.event("got-instructions");
 
@@ -108,30 +108,30 @@ setInterval(async () => {
 			jitoTip,
 		);
 
-		log.transaction = {
-			fetchedAt: Date.now(),
-			transaction: transaction,
-		};
+		// log.transaction = {
+		// 	fetchedAt: Date.now(),
+		// 	transaction: transaction,
+		// };
 
 		performance.event("constructed-transaction");
 
 		const bundleData = await sendJitoBundle([transaction]);
 
-		log.jtioBundle = {
-			fetchedAt: Date.now(),
-			bundle: bundleData.result,
-		};
+		// log.jtioBundle = {
+		// 	fetchedAt: Date.now(),
+		// 	bundle: bundleData.result,
+		// };
 
 		performance.event("sent-bundle");
 
 		console.log(bundleData.result);
 
-		saveLog(log);
+		// saveLog(log);
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} catch (error: any) {
 		console.log("\x1b[31m%s\x1b[0m", "failed.");
 
-		log.errorLogs = [...log.errorLogs, error.message];
-		saveLog(log);
+		// log.errorLogs = [...log.errorLogs, error.message];
+		// saveLog(log);
 	}
 }, 50);
