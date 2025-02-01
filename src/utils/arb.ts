@@ -63,15 +63,16 @@ export const combineQuotes = (
 	const combinedQuote = quote;
 
 	const jitoTip = Math.floor(
-		Number.parseFloat(reverseQuote.outAmount) -
-			Number.parseFloat(quote.inAmount) / 2,
+		(Number.parseFloat(reverseQuote.outAmount) -
+			Number.parseFloat(quote.inAmount)) /
+			2,
 	);
 
-	combinedQuote.outAmount = String(
-		Number.parseFloat(reverseQuote.outAmount) + jitoTip,
-	);
+	console.log(`JITO TIP: ${jitoTip}`);
+
+	combinedQuote.outAmount = String(Number.parseFloat(quote.inAmount) + jitoTip);
 	combinedQuote.otherAmountThreshold = String(
-		Number.parseFloat(reverseQuote.outAmount) + jitoTip,
+		Number.parseFloat(quote.inAmount) + jitoTip,
 	);
 	combinedQuote.priceImpactPct = "0";
 	combinedQuote.routePlan = quote.routePlan.concat(reverseQuote.routePlan);

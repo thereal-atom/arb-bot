@@ -37,7 +37,7 @@ setInterval(async () => {
 	try {
 		const performance = trackPerformance("checking-for-profit");
 
-		const uiAmountSol = 0.4;
+		const uiAmountSol = 0.3;
 
 		// log.inAmountLamports = uiAmountSol * 10 ** 9;
 
@@ -90,6 +90,8 @@ setInterval(async () => {
 		);
 
 		const combinedQuote = combineQuotes(quote.rawQuote, reverseQuote.rawQuote);
+
+		console.log(combinedQuote);
 
 		const instructions = await getJupiterSwapTransactionInstructions(
 			jupiter,
