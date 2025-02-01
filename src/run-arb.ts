@@ -77,12 +77,12 @@ setInterval(async () => {
 
 		// log.calculatedJitoTip = jitoTip;
 
-		// const threshold = 100_000;
-		// if (profitLamports < threshold) {
-		// 	// saveLog(log);
+		const threshold = 100_000;
+		if (profitLamports < threshold) {
+			// saveLog(log);
 
-		// 	return;
-		// }
+			return;
+		}
 
 		console.log(
 			"\x1b[35m%s\x1b[0m",
