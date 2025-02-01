@@ -62,14 +62,17 @@ export const combineQuotes = (
 ) => {
 	const combinedQuote = quote;
 
-	// combinedQuote.outAmount = String(
-	// 	Number.parseFloat(quote.inAmount) +
-	// 		Number.parseFloat(reverseQuote.outAmount),
-	// );
-	// combinedQuote.otherAmountThreshold = String(
-	// 	Number.parseFloat(quote.inAmount) +
-	// 		Number.parseFloat(reverseQuote.outAmount),
-	// );
+	const jitoTip = Math.floor(
+		Number.parseFloat(reverseQuote.outAmount) -
+			Number.parseFloat(quote.inAmount) / 2,
+	);
+
+	combinedQuote.outAmount = String(
+		Number.parseFloat(reverseQuote.outAmount) + jitoTip,
+	);
+	combinedQuote.otherAmountThreshold = String(
+		Number.parseFloat(reverseQuote.outAmount) + jitoTip,
+	);
 	combinedQuote.priceImpactPct = "0";
 	combinedQuote.routePlan = quote.routePlan.concat(reverseQuote.routePlan);
 
