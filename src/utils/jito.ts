@@ -60,7 +60,7 @@ export const sendJitoBundle = async (
 	const jitoBundleResponse = await sendJitoRequest(
 		"/api/v1/bundles",
 		"sendBundle",
-		[transactions.map((tx) => bs58.encode(tx.serialize()))],
+		[transactions.map((tx) => bs58.encode(tx.serialize())), "ny"],
 	);
 
 	return jitoBundleResponse;

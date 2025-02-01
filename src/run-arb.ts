@@ -46,6 +46,9 @@ setInterval(async () => {
 			uiAmountSol,
 		});
 
+		// console.log(quote);
+		// console.log(reverseQuote);
+
 		// log.quotes = {
 		// 	quote: {
 		// 		fetchedAt: Date.now(),
@@ -74,12 +77,12 @@ setInterval(async () => {
 
 		// log.calculatedJitoTip = jitoTip;
 
-		const threshold = 100_000;
-		if (profitLamports < threshold) {
-			// saveLog(log);
+		// const threshold = 100_000;
+		// if (profitLamports < threshold) {
+		// 	// saveLog(log);
 
-			return;
-		}
+		// 	return;
+		// }
 
 		console.log(
 			"\x1b[35m%s\x1b[0m",
@@ -108,6 +111,9 @@ setInterval(async () => {
 			jitoTip,
 		);
 
+		// const simulateResponse = await connection.simulateTransaction(transaction);
+		// console.log(simulateResponse);
+
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
 		// 	transaction: transaction,
@@ -134,4 +140,4 @@ setInterval(async () => {
 		// log.errorLogs = [...log.errorLogs, error.message];
 		// saveLog(log);
 	}
-}, 50);
+}, 200);

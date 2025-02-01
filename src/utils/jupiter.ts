@@ -34,22 +34,6 @@ export const getJupiterSwapQuote = async (
 
 	const rawQuote = res;
 
-	// rawQuote.platformFee = undefined;
-	// rawQuote.outAmount = (
-	// 	res.platformFee
-	// 		? Number.parseFloat(res.outAmount) +
-	// 			Number.parseFloat(res.platformFee.amount)
-	// 		: res.outAmount
-	// ).toString();
-	// rawQuote.otherAmountThreshold = (
-	// 	res.platformFee
-	// 		? Number.parseFloat(res.otherAmountThreshold) +
-	// 			Number.parseFloat(res.platformFee.amount)
-	// 		: res.otherAmountThreshold
-	// ).toString();
-
-	// console.log(rawQuote);
-
 	return {
 		...rawQuote,
 		inAmount: Number.parseFloat(rawQuote.inAmount),
