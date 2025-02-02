@@ -153,38 +153,27 @@ export const constructArbitrageTransaction = async (
 
 	const borrowInstructionIndex = ixs.length;
 
-	// const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
-	// 	{
-	// 		wallet,
-	// 		...flashLoanInstructionData.borrowInstructionData.walletData,
-	// 	},
-	// 	flashLoanInstructionData.borrowInstructionData.options,
-	// );
-
-	const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
+	const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
 		{
 			wallet,
 			...flashLoanInstructionData.borrowInstructionData.walletData,
 		},
 		flashLoanInstructionData.borrowInstructionData.options,
 	);
-	ixs.push(borrowInstruction);
+
+	// const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
+	// 	{
+	// 		wallet,
+	// 		...flashLoanInstructionData.borrowInstructionData.walletData,
+	// 	},
+	// 	flashLoanInstructionData.borrowInstructionData.options,
+	// );
+	// ixs.push(borrowInstruction);
 
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
 
-	// const repayInstruction = constructSolendFlashLoanRepayInstruction(
-	// 	{
-	// 		wallet,
-	// 		...flashLoanInstructionData.repayInstructionData.walletData,
-	// 	},
-	// 	{
-	// 		...flashLoanInstructionData.repayInstructionData.options,
-	// 		borrowInstructionIndex,
-	// 	},
-	// );
-
-	const repayInstruction = constructKaminoFlashLoanRepayInstruction(
+	const repayInstruction = constructSolendFlashLoanRepayInstruction(
 		{
 			wallet,
 			...flashLoanInstructionData.repayInstructionData.walletData,
@@ -194,6 +183,17 @@ export const constructArbitrageTransaction = async (
 			borrowInstructionIndex,
 		},
 	);
+
+	// const repayInstruction = constructKaminoFlashLoanRepayInstruction(
+	// 	{
+	// 		wallet,
+	// 		...flashLoanInstructionData.repayInstructionData.walletData,
+	// 	},
+	// 	{
+	// 		...flashLoanInstructionData.repayInstructionData.options,
+	// 		borrowInstructionIndex,
+	// 	},
+	// );
 	ixs.push(repayInstruction);
 
 	const tipInstruction = SystemProgram.transfer({
