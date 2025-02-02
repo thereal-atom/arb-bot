@@ -71,7 +71,8 @@ const runArb = async () => {
 
 		// log.calculatedJitoTip = jitoTip;
 
-		const threshold = config.arbConfig.thresholdLamports;
+		// const threshold = config.arbConfig.thresholdLamports;
+		const threshold = 0.0007 * inAmountLamports;
 		if (profitLamports < threshold) {
 			// saveLog(log);
 
