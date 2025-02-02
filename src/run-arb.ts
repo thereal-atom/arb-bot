@@ -29,9 +29,10 @@ const runArb = async () => {
 
 		// const inAmountLamports = config.arbConfig.lamportAmountSol;
 		// random amount from 0.5 to 100 sol
-		const inAmountLamports = Math.floor(
-			Math.random() * (100_000_000_000 - 500_000_000 + 1) + 500_000_000,
-		);
+		// const inAmountLamports = Math.floor(
+		// 	Math.random() * (100_000_000_000 - 500_000_000 + 1) + 500_000_000,
+		// );
+		const inAmountLamports = 500_000_000;
 		const uiAmountSol = inAmountLamports / 10 ** 9;
 
 		// log.inAmountLamports = inAmount;
