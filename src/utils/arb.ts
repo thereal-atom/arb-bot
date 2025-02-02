@@ -28,6 +28,10 @@ import type {
 	SolendFlashLoanInstructionWalletData,
 	SolendFlashLoanRepayInstructionOptions,
 } from "../types/solend";
+import {
+	constructKaminoFlashLoanBorrowInstruction,
+	constructKaminoFlashLoanRepayInstruction,
+} from "./kamino";
 
 const jitoTipAccountAddresses = [
 	"96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5",
@@ -149,7 +153,15 @@ export const constructArbitrageTransaction = async (
 
 	const borrowInstructionIndex = ixs.length;
 
-	const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
+	// const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
+	// 	{
+	// 		wallet,
+	// 		...flashLoanInstructionData.borrowInstructionData.walletData,
+	// 	},
+	// 	flashLoanInstructionData.borrowInstructionData.options,
+	// );
+
+	const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
 		{
 			wallet,
 			...flashLoanInstructionData.borrowInstructionData.walletData,
@@ -161,7 +173,18 @@ export const constructArbitrageTransaction = async (
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
 
-	const repayInstruction = constructSolendFlashLoanRepayInstruction(
+	// const repayInstruction = constructSolendFlashLoanRepayInstruction(
+	// 	{
+	// 		wallet,
+	// 		...flashLoanInstructionData.repayInstructionData.walletData,
+	// 	},
+	// 	{
+	// 		...flashLoanInstructionData.repayInstructionData.options,
+	// 		borrowInstructionIndex,
+	// 	},
+	// );
+
+	const repayInstruction = constructKaminoFlashLoanRepayInstruction(
 		{
 			wallet,
 			...flashLoanInstructionData.repayInstructionData.walletData,

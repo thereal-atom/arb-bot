@@ -2,12 +2,12 @@
 	"name": "arb-bot",
 	"version": "1.0.50",
 	"scripts": {
-		"dev": "bun run --watch src/index.ts",
 		"start": "bun run src/run-arb.ts"
 	},
 	"dependencies": {
 		"@coral-xyz/anchor": "^0.30.1",
 		"@jup-ag/api": "^6.0.38",
+		"@kamino-finance/klend-sdk": "^5.10.21",
 		"@solana/web3.js": "^1.98.0",
 		"@solendprotocol/solend-sdk": "^0.14.0",
 		"bs58": "^6.0.0",

@@ -142,6 +142,7 @@ const runArb = async () => {
 		// saveLog(log);
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} catch (error: any) {
+		console.log(error);
 		console.log("\x1b[31m%s\x1b[0m", "failed.");
 
 		// log.errorLogs = [...log.errorLogs, error.message];
@@ -149,6 +150,6 @@ const runArb = async () => {
 	}
 };
 
-// await runArb();
+await runArb();
 
-setInterval(runArb, config.arbConfig.attemptInterval);
+// setInterval(runArb, config.arbConfig.attemptInterval);
