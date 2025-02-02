@@ -85,6 +85,7 @@ export const combineQuotes = (
 	combinedQuote.otherAmountThreshold = String(
 		Number.parseFloat(quote.inAmount) + jitoTip,
 	);
+	combinedQuote.outputMint = quote.inputMint;
 	combinedQuote.priceImpactPct = "0";
 	combinedQuote.routePlan = quote.routePlan.concat(reverseQuote.routePlan);
 
