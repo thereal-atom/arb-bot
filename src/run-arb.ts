@@ -7,11 +7,19 @@ import {
 } from "./utils/arb";
 import { getJupiterSwapTransactionInstructions } from "./utils/jupiter";
 import { sendJitoBundle } from "./utils/jito";
-import { trackPerformance } from "./utils/common";
+import { trackPerformance, WSOL_MINT } from "./utils/common";
 import { setup } from "./utils/setup";
 // import { type Log, saveLog, createLog } from "./utils/logs";
 
 const { connection, jupiter, wallet, config } = setup();
+
+const mints = [
+	"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
+	"Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
+	"2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
+	"J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
+	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
+];
 
 const runArb = async () => {
 	// const log = createLog();
@@ -25,7 +33,7 @@ const runArb = async () => {
 		// log.inAmountLamports = inAmount;
 
 		const { quote, reverseQuote } = await getArbitrageQuotes(jupiter, {
-			mintB: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+			mintB: mints[Math.floor(Math.random() * mints.length)],
 			uiAmountSol,
 		});
 
@@ -102,7 +110,7 @@ const runArb = async () => {
 					},
 					options: {
 						amount: inAmountLamports,
-						mint: "So11111111111111111111111111111111111111112",
+						mint: WSOL_MINT,
 					},
 				},
 				repayInstructionData: {
@@ -111,15 +119,15 @@ const runArb = async () => {
 					},
 					options: {
 						amount: inAmountLamports,
-						mint: "So11111111111111111111111111111111111111112",
+						mint: WSOL_MINT,
 					},
 				},
 			},
 			jitoTip,
 		);
 
-		const simulateResponse = await connection.simulateTransaction(transaction);
-		console.log(simulateResponse.value.logs);
+		// const simulateResponse = await connection.simulateTransaction(transaction);
+		// console.log(simulateResponse.value.logs);
 
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
