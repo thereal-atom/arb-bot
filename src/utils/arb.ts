@@ -161,14 +161,14 @@ export const constructArbitrageTransaction = async (
 	// 	flashLoanInstructionData.borrowInstructionData.options,
 	// );
 
-	const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
-		{
-			wallet,
-			...flashLoanInstructionData.borrowInstructionData.walletData,
-		},
-		flashLoanInstructionData.borrowInstructionData.options,
-	);
-	ixs.push(borrowInstruction);
+	// const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
+	// 	{
+	// 		wallet,
+	// 		...flashLoanInstructionData.borrowInstructionData.walletData,
+	// 	},
+	// 	flashLoanInstructionData.borrowInstructionData.options,
+	// );
+	// ixs.push(borrowInstruction);
 
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
@@ -184,17 +184,17 @@ export const constructArbitrageTransaction = async (
 	// 	},
 	// );
 
-	const repayInstruction = constructSolendFlashLoanRepayInstruction(
-		{
-			wallet,
-			...flashLoanInstructionData.repayInstructionData.walletData,
-		},
-		{
-			...flashLoanInstructionData.repayInstructionData.options,
-			borrowInstructionIndex,
-		},
-	);
-	ixs.push(repayInstruction);
+	// const repayInstruction = constructSolendFlashLoanRepayInstruction(
+	// 	{
+	// 		wallet,
+	// 		...flashLoanInstructionData.repayInstructionData.walletData,
+	// 	},
+	// 	{
+	// 		...flashLoanInstructionData.repayInstructionData.options,
+	// 		borrowInstructionIndex,
+	// 	},
+	// );
+	// ixs.push(repayInstruction);
 
 	const tipInstruction = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,

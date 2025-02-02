@@ -32,7 +32,7 @@ const runArb = async () => {
 		// const inAmountLamports = Math.floor(
 		// 	Math.random() * (100_000_000_000 - 500_000_000 + 1) + 500_000_000,
 		// );
-		const inAmountLamports = 500_000_000;
+		const inAmountLamports = 300_000_000;
 		const uiAmountSol = inAmountLamports / 10 ** 9;
 
 		// log.inAmountLamports = inAmount;
@@ -74,7 +74,7 @@ const runArb = async () => {
 		// log.calculatedJitoTip = jitoTip;
 
 		// const threshold = config.arbConfig.thresholdLamports;
-		const threshold = 0.0007 * inAmountLamports;
+		const threshold = 50_000;
 		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
 		if (profitLamports < threshold) {
 			// saveLog(log);
@@ -133,15 +133,43 @@ const runArb = async () => {
 			jitoTip,
 		);
 
+		performance.event("constructed-transaction");
+
 		// const simulateResponse = await connection.simulateTransaction(transaction);
 		// console.log(simulateResponse.value.logs);
+		// const errorLogs = simulateResponse.value.logs?.filter((log) =>
+		// 	log.includes("error"),
+		// );
+
+		// if (errorLogs?.length) {
+		// 	console.log(errorLogs);
+
+		// 	throw new Error("Simulation failed");
+		// }
 
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
 		// 	transaction: transaction,
 		// };
 
-		performance.event("constructed-transaction");
+		// const signature = await connection.sendRawTransaction(
+		// 	transaction.serialize(),
+		// 	{
+		// 		maxRetries: 0,
+		// 		skipPreflight: true,
+		// 	},
+		// );
+
+		// console.log(signature);
+
+		// const confirmation = await connection.confirmTransaction(
+		// 	signature,
+		// 	"confirmed",
+		// );
+
+		// console.log(confirmation);
+
+		// performance.event("sent-transaction");
 
 		const bundleData = await sendJitoBundle([transaction]);
 
