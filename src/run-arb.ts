@@ -32,7 +32,7 @@ const runArb = async () => {
 		// const inAmountLamports = Math.floor(
 		// 	Math.random() * (100_000_000_000 - 500_000_000 + 1) + 500_000_000,
 		// );
-		const inAmountLamports = 300_000_000;
+		const inAmountLamports = 5_000_000_000;
 		const uiAmountSol = inAmountLamports / 10 ** 9;
 
 		// log.inAmountLamports = inAmount;
@@ -74,7 +74,7 @@ const runArb = async () => {
 		// log.calculatedJitoTip = jitoTip;
 
 		// const threshold = config.arbConfig.thresholdLamports;
-		const threshold = 50_000;
+		const threshold = 0.0002 * inAmountLamports;
 		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
 		if (profitLamports < threshold) {
 			// saveLog(log);
