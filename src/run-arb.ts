@@ -32,7 +32,7 @@ const runArb = async () => {
 		const inAmountLamports = Math.floor(
 			Math.random() * (100_000_000_000 - 500_000_000 + 1) + 500_000_000,
 		);
-		const uiAmountSol = Math.floor(inAmountLamports / 10 ** 9);
+		const uiAmountSol = inAmountLamports / 10 ** 9;
 
 		// log.inAmountLamports = inAmount;
 
