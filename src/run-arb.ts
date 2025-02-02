@@ -19,6 +19,11 @@ const mints = [
 	"2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
 	"J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
 	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
+	"12ifMz54Sq4Ab4RiPezsbDYkY2fo5L3VTabfJJ2ppump",
+	"CVRR1ZcB6LRkybpUJRRcwc3LZDuc6hH7g8Uxihegpump",
+	"2Kk16bkuFH8dsd117feYaqPjBYrF8NC5GCM2VMyKpump",
+	"5ukFUcSw5NuiBMQEPucSfwBf1jKruoQvwxuuuicbpump",
+	"2sCUCJdVkmyXp4dT8sFaA9LKgSMK4yDPi9zLHiwXpump",
 ];
 
 const runArb = async () => {
@@ -28,7 +33,7 @@ const runArb = async () => {
 		const performance = trackPerformance("checking-for-profit");
 
 		// const inAmountLamports = config.arbConfig.lamportAmountSol;
-		// random amount from 0.5 to 100 sol
+		// random amount from 1 to 100 sol
 		const inAmountLamports = Math.floor(
 			Math.random() * (100_000_000_000 - 1_000_000_000) + 1_000_000_000,
 		);
@@ -69,12 +74,12 @@ const runArb = async () => {
 			`${quote.inAmount} → ${reverseQuote.outAmount} SOL (${profitLamports.toFixed(5)} lamports, ${profitPercent}%)`,
 		);
 
-		const jitoTip = Math.min(Math.floor(profitLamports / 2), 1_000_000);
+		const jitoTip = Math.min(Math.floor(profitLamports / 2), 3_000_000);
 
 		// log.calculatedJitoTip = jitoTip;
 
 		// const threshold = config.arbConfig.thresholdLamports;
-		const threshold = 0.0002 * inAmountLamports;
+		const threshold = 0.001 * inAmountLamports;
 		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
 		if (profitLamports < threshold) {
 			// saveLog(log);
@@ -137,39 +142,11 @@ const runArb = async () => {
 
 		// const simulateResponse = await connection.simulateTransaction(transaction);
 		// console.log(simulateResponse.value.logs);
-		// const errorLogs = simulateResponse.value.logs?.filter((log) =>
-		// 	log.includes("error"),
-		// );
-
-		// if (errorLogs?.length) {
-		// 	console.log(errorLogs);
-
-		// 	throw new Error("Simulation failed");
-		// }
 
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
 		// 	transaction: transaction,
 		// };
-
-		// const signature = await connection.sendRawTransaction(
-		// 	transaction.serialize(),
-		// 	{
-		// 		maxRetries: 0,
-		// 		skipPreflight: true,
-		// 	},
-		// );
-
-		// console.log(signature);
-
-		// const confirmation = await connection.confirmTransaction(
-		// 	signature,
-		// 	"confirmed",
-		// );
-
-		// console.log(confirmation);
-
-		// performance.event("sent-transaction");
 
 		const bundleData = await sendJitoBundle([transaction]);
 
