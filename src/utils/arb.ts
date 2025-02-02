@@ -19,6 +19,15 @@ import type {
 	SwapInstructionsResponse,
 } from "@jup-ag/api";
 import type { Wallet } from "@coral-xyz/anchor";
+import {
+	constructSolendFlashLoanBorrowInstruction,
+	constructSolendFlashLoanRepayInstruction,
+} from "./solend";
+import type {
+	SolendFlashLoanBorrowInstructionOptions,
+	SolendFlashLoanInstructionWalletData,
+	SolendFlashLoanRepayInstructionOptions,
+} from "../types/solend";
 
 const jitoTipAccountAddresses = [
 	"96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5",
@@ -68,8 +77,6 @@ export const combineQuotes = (
 			2,
 	);
 
-	console.log(`JITO TIP: ${jitoTip}`);
-
 	combinedQuote.outAmount = String(Number.parseFloat(quote.inAmount) + jitoTip);
 	combinedQuote.otherAmountThreshold = String(
 		Number.parseFloat(quote.inAmount) + jitoTip,
@@ -108,7 +115,22 @@ const instructionFormat = (instruction: Instruction) => {
 export const constructArbitrageTransaction = async (
 	connection: Connection,
 	wallet: Wallet,
-	jupiterSwapInstructions: SwapInstructionsResponse,
+	jupiterSwapInstructions: SwapInstructionsResponse & {
+		computeUnitLimit: number;
+	},
+	flashLoanInstructionData: {
+		borrowInstructionData: {
+			walletData: Omit<SolendFlashLoanInstructionWalletData, "wallet">;
+			options: SolendFlashLoanBorrowInstructionOptions;
+		};
+		repayInstructionData: {
+			walletData: Omit<SolendFlashLoanInstructionWalletData, "wallet">;
+			options: Omit<
+				SolendFlashLoanRepayInstructionOptions,
+				"borrowInstructionIndex"
+			>;
+		};
+	},
 	jitoTip: number,
 ) => {
 	const instructions = jupiterSwapInstructions;
@@ -116,7 +138,8 @@ export const constructArbitrageTransaction = async (
 	let ixs: TransactionInstruction[] = [];
 
 	const computeUnitLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
-		units: instructions.computeUnitLimit,
+		// double to account for the two flash loan instructions
+		units: instructions.computeUnitLimit * 2,
 	});
 	ixs.push(computeUnitLimitInstruction);
 
@@ -124,8 +147,31 @@ export const constructArbitrageTransaction = async (
 		instructions.setupInstructions.map(instructionFormat);
 	ixs = ixs.concat(setupInstructions);
 
+	const borrowInstructionIndex = ixs.length;
+
+	const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
+		{
+			wallet,
+			...flashLoanInstructionData.borrowInstructionData.walletData,
+		},
+		flashLoanInstructionData.borrowInstructionData.options,
+	);
+	ixs.push(borrowInstruction);
+
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
+
+	const repayInstruction = constructSolendFlashLoanRepayInstruction(
+		{
+			wallet,
+			...flashLoanInstructionData.repayInstructionData.walletData,
+		},
+		{
+			...flashLoanInstructionData.repayInstructionData.options,
+			borrowInstructionIndex,
+		},
+	);
+	ixs.push(repayInstruction);
 
 	const tipInstruction = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,

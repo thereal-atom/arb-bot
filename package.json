@@ -8,9 +8,8 @@
 	"dependencies": {
 		"@coral-xyz/anchor": "^0.30.1",
 		"@jup-ag/api": "^6.0.38",
-		"@mercurial-finance/farming-sdk": "^1.0.17",
 		"@solana/web3.js": "^1.98.0",
-		"axios": "^1.7.9",
+		"@solendprotocol/solend-sdk": "^0.14.0",
 		"bs58": "^6.0.0",
 		"uuid": "^11.0.5",
 		"zod": "^3.24.1"

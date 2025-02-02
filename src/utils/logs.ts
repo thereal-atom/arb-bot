@@ -1,6 +1,7 @@
 import type { VersionedTransaction } from "@solana/web3.js";
 import type { CustomJupiterQuote } from "./jupiter";
 import fs from "node:fs";
+import { randomUUIDv7 } from "bun";
 
 export interface Log {
 	id: string;
@@ -49,4 +50,14 @@ export const saveLog = (log: Log) => {
 	logs.push(log);
 
 	fs.writeFileSync("./logs.json", JSON.stringify(logs, null, 4));
+};
+
+export const createLog = () => {
+	const log: Log = {
+		id: randomUUIDv7(),
+		timestamp: Date.now(),
+		errorLogs: [],
+	};
+
+	return log;
 };

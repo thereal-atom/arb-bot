@@ -1,45 +1,28 @@
-import { createJupiterApiClient } from "@jup-ag/api";
-import { Wallet } from "@coral-xyz/anchor";
-import { Keypair } from "@solana/web3.js";
-import { bs58 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
-import { config } from "./config";
+import { PublicKey } from "@solana/web3.js";
 import {
 	combineQuotes,
 	constructArbitrageTransaction,
 	getArbitrageQuotes,
 	getQuoteProfit,
 } from "./utils/arb";
-import { initRpcConnection } from "./utils/solana";
 import { getJupiterSwapTransactionInstructions } from "./utils/jupiter";
 import { sendJitoBundle } from "./utils/jito";
 import { trackPerformance } from "./utils/common";
-import { randomUUIDv7 } from "bun";
-import { type Log, saveLog } from "./utils/logs";
+import { setup } from "./utils/setup";
+// import { type Log, saveLog, createLog } from "./utils/logs";
 
-console.log("starting arb bot...");
+const { connection, jupiter, wallet, config } = setup();
 
-const connection = initRpcConnection(config.rpc.url);
-
-const jupiter = createJupiterApiClient({
-	basePath: config.jupiter.swapApiUrl,
-});
-const wallet = new Wallet(
-	Keypair.fromSecretKey(bs58.decode(config.wallet.privateKey)),
-);
-
-setInterval(async () => {
-	// const log: Log = {
-	// 	id: randomUUIDv7(),
-	// 	timestamp: Date.now(),
-	// 	errorLogs: [],
-	// };
+const runArb = async () => {
+	// const log = createLog();
 
 	try {
 		const performance = trackPerformance("checking-for-profit");
 
-		const uiAmountSol = 0.3;
+		const inAmountLamports = config.arbConfig.lamportAmountSol;
+		const uiAmountSol = inAmountLamports / 10 ** 9;
 
-		// log.inAmountLamports = uiAmountSol * 10 ** 9;
+		// log.inAmountLamports = inAmount;
 
 		const { quote, reverseQuote } = await getArbitrageQuotes(jupiter, {
 			mintB: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -77,7 +60,7 @@ setInterval(async () => {
 
 		// log.calculatedJitoTip = jitoTip;
 
-		const threshold = 100_000;
+		const threshold = config.arbConfig.thresholdLamports;
 		if (profitLamports < threshold) {
 			// saveLog(log);
 
@@ -91,7 +74,7 @@ setInterval(async () => {
 
 		const combinedQuote = combineQuotes(quote.rawQuote, reverseQuote.rawQuote);
 
-		console.log(combinedQuote);
+		// console.log(combinedQuote);
 
 		const instructions = await getJupiterSwapTransactionInstructions(
 			jupiter,
@@ -106,15 +89,37 @@ setInterval(async () => {
 
 		performance.event("got-instructions");
 
+		const wsolTokenAccountAddress = config.wallet.wsolTokenAccountAddress;
+
 		const transaction = await constructArbitrageTransaction(
 			connection,
 			wallet,
 			instructions,
+			{
+				borrowInstructionData: {
+					walletData: {
+						mintTokenAccount: new PublicKey(wsolTokenAccountAddress),
+					},
+					options: {
+						amount: inAmountLamports,
+						mint: "So11111111111111111111111111111111111111112",
+					},
+				},
+				repayInstructionData: {
+					walletData: {
+						mintTokenAccount: new PublicKey(wsolTokenAccountAddress),
+					},
+					options: {
+						amount: inAmountLamports,
+						mint: "So11111111111111111111111111111111111111112",
+					},
+				},
+			},
 			jitoTip,
 		);
 
-		// const simulateResponse = await connection.simulateTransaction(transaction);
-		// console.log(simulateResponse);
+		const simulateResponse = await connection.simulateTransaction(transaction);
+		console.log(simulateResponse.value.logs);
 
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
@@ -132,7 +137,7 @@ setInterval(async () => {
 
 		performance.event("sent-bundle");
 
-		console.log(bundleData.result);
+		console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 
 		// saveLog(log);
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -142,4 +147,8 @@ setInterval(async () => {
 		// log.errorLogs = [...log.errorLogs, error.message];
 		// saveLog(log);
 	}
-}, 200);
+};
+
+// await runArb();
+
+setInterval(runArb, config.arbConfig.attemptInterval);
