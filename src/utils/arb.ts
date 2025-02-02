@@ -153,14 +153,6 @@ export const constructArbitrageTransaction = async (
 
 	const borrowInstructionIndex = ixs.length;
 
-	const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
-		{
-			wallet,
-			...flashLoanInstructionData.borrowInstructionData.walletData,
-		},
-		flashLoanInstructionData.borrowInstructionData.options,
-	);
-
 	// const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
 	// 	{
 	// 		wallet,
@@ -168,21 +160,18 @@ export const constructArbitrageTransaction = async (
 	// 	},
 	// 	flashLoanInstructionData.borrowInstructionData.options,
 	// );
-	// ixs.push(borrowInstruction);
+
+	const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
+		{
+			wallet,
+			...flashLoanInstructionData.borrowInstructionData.walletData,
+		},
+		flashLoanInstructionData.borrowInstructionData.options,
+	);
+	ixs.push(borrowInstruction);
 
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
-
-	const repayInstruction = constructSolendFlashLoanRepayInstruction(
-		{
-			wallet,
-			...flashLoanInstructionData.repayInstructionData.walletData,
-		},
-		{
-			...flashLoanInstructionData.repayInstructionData.options,
-			borrowInstructionIndex,
-		},
-	);
 
 	// const repayInstruction = constructKaminoFlashLoanRepayInstruction(
 	// 	{
@@ -194,6 +183,17 @@ export const constructArbitrageTransaction = async (
 	// 		borrowInstructionIndex,
 	// 	},
 	// );
+
+	const repayInstruction = constructSolendFlashLoanRepayInstruction(
+		{
+			wallet,
+			...flashLoanInstructionData.repayInstructionData.walletData,
+		},
+		{
+			...flashLoanInstructionData.repayInstructionData.options,
+			borrowInstructionIndex,
+		},
+	);
 	ixs.push(repayInstruction);
 
 	const tipInstruction = SystemProgram.transfer({
