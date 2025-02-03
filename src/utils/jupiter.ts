@@ -29,7 +29,7 @@ export const getJupiterSwapQuote = async (
 		outputMint: options.outputMint,
 		amount: Math.floor(options.amount).toString(),
 		slippageBps: "0",
-		excludeDexes: ["Obric V2"].join(","),
+		// excludeDexes: ["Obric V2"].join(","),
 		maxAccounts: "20",
 	});
 
