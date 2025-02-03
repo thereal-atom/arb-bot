@@ -14,11 +14,11 @@ import { setup } from "./utils/setup";
 const { connection, jupiter, wallet, config } = setup();
 
 const mints = [
-	"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
-	"Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
-	"2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
-	"J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
-	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
+	// "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
+	// "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
+	// "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
+	// "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
+	// "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
 	"12ifMz54Sq4Ab4RiPezsbDYkY2fo5L3VTabfJJ2ppump",
 	"CVRR1ZcB6LRkybpUJRRcwc3LZDuc6hH7g8Uxihegpump",
 	"2Kk16bkuFH8dsd117feYaqPjBYrF8NC5GCM2VMyKpump",
@@ -33,7 +33,7 @@ const runArb = async () => {
 		const performance = trackPerformance("checking-for-profit");
 
 		// const inAmountLamports = config.arbConfig.lamportAmountSol;
-		const inAmountLamports = getRandomNumber(100_000_000, 1_000_000_000);
+		const inAmountLamports = getRandomNumber(1_000_000_000, 10_000_000_000);
 		// const inAmountLamports = 5_000_000_000;
 
 		const uiAmountSol = inAmountLamports / 10 ** 9;
