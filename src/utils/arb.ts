@@ -248,7 +248,7 @@ export const constructArbitrageTransaction = async (
 	const transaction = new VersionedTransaction(messageV0);
 	transaction.sign([wallet.payer]);
 
-	console.log(transaction.signatures);
+	console.log(new TextDecoder().decode(transaction.signatures[0]));
 
 	return transaction;
 };
