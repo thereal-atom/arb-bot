@@ -157,23 +157,33 @@ const runArb = async () => {
 			console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
 		}
 
-		// log.transaction = {
-		// 	fetchedAt: Date.now(),
-		// 	transaction: transaction,
-		// };
+		const sendType: "bundle" | "transaction" = "transaction";
 
-		const bundleData = await sendJitoBundle([transaction]);
+		if (sendType === "bundle") {
+			const bundleData = await sendJitoBundle([transaction]);
 
-		// log.jtioBundle = {
-		// 	fetchedAt: Date.now(),
-		// 	bundle: bundleData.result,
-		// };
+			performance.event("sent-bundle");
 
-		performance.event("sent-bundle");
+			console.log("\x1b[33m%s\x1b[0m", bundleData.result);
+		} else {
+			const signature = await connection.sendRawTransaction(
+				transaction.serialize(),
+			);
 
-		console.log("\x1b[33m%s\x1b[0m", bundleData.result);
+			console.log(`sent transaction with signature ${signature}`);
 
-		// saveLog(log);
+			const confirmation = await connection.confirmTransaction(
+				signature,
+				"confirmed",
+			);
+
+			console.log(
+				`transaction confirmed with status ${JSON.stringify(confirmation)}`,
+			);
+
+			performance.event("sent-transaction");
+		}
+
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} catch (error: any) {
 		console.log(error);
