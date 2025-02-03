@@ -386,6 +386,10 @@ export const constructArbitrageTransaction = async (
 		throw new Error("losing trade");
 	}
 
+	if (simulateResponse.value.err) {
+		throw new Error(simulateResponse.value.err.toString());
+	}
+
 	// const simulatedInputAmount = startTransferInstruction.parsed.info.tokenAmount;
 
 	// const swapIx = simulateResponse.value.innerInstructions.map(
