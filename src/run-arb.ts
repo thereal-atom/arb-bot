@@ -20,11 +20,11 @@ const mints = [
 	"USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA", // USDS
 	"J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
 	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
-	// "B29VFNAL4vh7rNcZMCmsHkZaYzUaVj3UinU3dFh6pump", // Friday AI
-	// "61V8vBaqAGMpgDQi4JcAwo1dmBGHsyhzodcPqnEVpump", // Arc
-	// "HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
-	// "5csfa95Xf8ebiCwP9joQ7mtC8KwFvnnejnYx5FbYpump", // XMONEY
-	// "7XJiwLDrjzxDYdZipnJXzpr1iDTmK55XixSFAa7JgNEL", // MLG
+	"B29VFNAL4vh7rNcZMCmsHkZaYzUaVj3UinU3dFh6pump", // Friday AI
+	"61V8vBaqAGMpgDQi4JcAwo1dmBGHsyhzodcPqnEVpump", // Arc
+	"HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
+	"5csfa95Xf8ebiCwP9joQ7mtC8KwFvnnejnYx5FbYpump", // XMONEY
+	"7XJiwLDrjzxDYdZipnJXzpr1iDTmK55XixSFAa7JgNEL", // MLG
 ];
 
 const runArb = async () => {
@@ -86,8 +86,7 @@ const runArb = async () => {
 		// log.calculatedJitoTip = jitoTip;
 
 		// const threshold = config.arbConfig.thresholdLamports;
-		// const threshold = 0.0001 * inAmountLamports;
-		const threshold = 100_000;
+		const threshold = 0.0001 * inAmountLamports;
 		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
 		if (profitLamports < threshold) {
 			// saveLog(log);
