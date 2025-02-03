@@ -151,6 +151,11 @@ export const constructArbitrageTransaction = async (
 	// console.log(`compute unit limit is ${instructions.computeUnitLimit} CUs`);
 	ixs.push(computeUnitLimitInstruction);
 
+	const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+		microLamports: 10000,
+	});
+	ixs.push(addPriorityFee);
+
 	const setupInstructions =
 		instructions.setupInstructions.map(instructionFormat);
 	ixs = ixs.concat(setupInstructions);
