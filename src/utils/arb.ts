@@ -290,109 +290,111 @@ export const constructArbitrageTransaction = async (
 		// 	// ),
 		// },
 		replaceRecentBlockhash: true,
-		innerInstructions: true,
+		// innerInstructions: true,
 	});
 
-	const simulatedSwapInstruction = (
-		simulateResponse.value as typeof simulateResponse.value & {
-			innerInstructions: ParsedInnerInstruction[];
-		}
-	).innerInstructions.find((ix) => ix.index === swapInstructionIndex);
+	console.log(simulateResponse);
 
-	if (!simulatedSwapInstruction) {
-		throw new Error("no simulated swap instruction found");
-	}
+	// const simulatedSwapInstruction = (
+	// 	simulateResponse.value as typeof simulateResponse.value & {
+	// 		innerInstructions: ParsedInnerInstruction[];
+	// 	}
+	// ).innerInstructions.find((ix) => ix.index === swapInstructionIndex);
 
-	const simulatedSwapInstructionInnerInstructions =
-		simulatedSwapInstruction?.instructions;
+	// if (!simulatedSwapInstruction) {
+	// 	throw new Error("no simulated swap instruction found");
+	// }
 
-	// console.log(
-	// 	simulatedSwapInstructionInnerInstructions.map((ix) => {
-	// 		return {
-	// 			...ix,
-	// 			accounts: undefined,
-	// 			programIdString: ix.programId.toBase58(),
-	// 			parsedInfo:
-	// 				"parsed" in ix ? (ix as ParsedInstruction).parsed.info : undefined,
-	// 		};
-	// 	}),
+	// const simulatedSwapInstructionInnerInstructions =
+	// 	simulatedSwapInstruction?.instructions;
+
+	// // console.log(
+	// // 	simulatedSwapInstructionInnerInstructions.map((ix) => {
+	// // 		return {
+	// // 			...ix,
+	// // 			accounts: undefined,
+	// // 			programIdString: ix.programId.toBase58(),
+	// // 			parsedInfo:
+	// // 				"parsed" in ix ? (ix as ParsedInstruction).parsed.info : undefined,
+	// // 		};
+	// // 	}),
+	// // );
+
+	// const transferInstructions = simulatedSwapInstructionInnerInstructions.filter(
+	// 	(ix) =>
+	// 		ix.programId.toBase58() === "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+	// ) as ParsedInstruction[];
+
+	// transferInstructions.forEach(console.log);
+
+	// const instructionsWithWsolSource = transferInstructions.filter(
+	// 	(ix) =>
+	// 		ix.parsed.info.source === "9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
+	// );
+	// const instructionsWithWsolDestination = transferInstructions.filter(
+	// 	(ix) =>
+	// 		ix.parsed.info.destination ===
+	// 		"9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
 	// );
 
-	const transferInstructions = simulatedSwapInstructionInnerInstructions.filter(
-		(ix) =>
-			ix.programId.toBase58() === "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-	) as ParsedInstruction[];
+	// if (
+	// 	instructionsWithWsolSource.length !== 1 ||
+	// 	instructionsWithWsolDestination.length !== 1
+	// ) {
+	// 	throw new Error(
+	// 		`no wsol transfer instructions found. found ${instructionsWithWsolSource.length} ixs with wsol source. found ${instructionsWithWsolDestination.length} ixs with wsol destination.`,
+	// 	);
+	// }
 
-	transferInstructions.forEach(console.log);
+	// const startTransferInstruction = instructionsWithWsolSource[0];
+	// const endTransferInstruction = instructionsWithWsolDestination[0];
 
-	const instructionsWithWsolSource = transferInstructions.filter(
-		(ix) =>
-			ix.parsed.info.source === "9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
-	);
-	const instructionsWithWsolDestination = transferInstructions.filter(
-		(ix) =>
-			ix.parsed.info.destination ===
-			"9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
-	);
+	// if (!startTransferInstruction) {
+	// 	throw new Error("no start transfer instruction found");
+	// }
 
-	if (
-		instructionsWithWsolSource.length !== 1 ||
-		instructionsWithWsolDestination.length !== 1
-	) {
-		throw new Error(
-			`no wsol transfer instructions found. found ${instructionsWithWsolSource.length} ixs with wsol source. found ${instructionsWithWsolDestination.length} ixs with wsol destination.`,
-		);
-	}
+	// if (!endTransferInstruction) {
+	// 	throw new Error("no end transfer instruction found");
+	// }
 
-	const startTransferInstruction = instructionsWithWsolSource[0];
-	const endTransferInstruction = instructionsWithWsolDestination[0];
+	// const simulatedInputAmount =
+	// 	"tokenAmount" in startTransferInstruction.parsed.info
+	// 		? startTransferInstruction.parsed.info.tokenAmount.amount
+	// 		: startTransferInstruction.parsed.info.amount;
+	// const simulatedOutputAmount =
+	// 	"tokenAmount" in endTransferInstruction.parsed.info
+	// 		? endTransferInstruction.parsed.info.tokenAmount.amount
+	// 		: endTransferInstruction.parsed.info.amount;
 
-	if (!startTransferInstruction) {
-		throw new Error("no start transfer instruction found");
-	}
+	// if (!simulatedInputAmount) {
+	// 	console.log(startTransferInstruction);
 
-	if (!endTransferInstruction) {
-		throw new Error("no end transfer instruction found");
-	}
+	// 	throw new Error("no simulated input amount found");
+	// }
 
-	const simulatedInputAmount =
-		"tokenAmount" in startTransferInstruction.parsed.info
-			? startTransferInstruction.parsed.info.tokenAmount.amount
-			: startTransferInstruction.parsed.info.amount;
-	const simulatedOutputAmount =
-		"tokenAmount" in endTransferInstruction.parsed.info
-			? endTransferInstruction.parsed.info.tokenAmount.amount
-			: endTransferInstruction.parsed.info.amount;
+	// if (!simulatedOutputAmount) {
+	// 	console.log(endTransferInstruction);
 
-	if (!simulatedInputAmount) {
-		console.log(startTransferInstruction);
+	// 	throw new Error("no simulated output amount found");
+	// }
 
-		throw new Error("no simulated input amount found");
-	}
+	// console.log(
+	// 	`simulated flow: ${simulatedInputAmount} -> ${simulatedOutputAmount}`,
+	// );
 
-	if (!simulatedOutputAmount) {
-		console.log(endTransferInstruction);
+	// console.log(Number.parseInt(simulatedOutputAmount));
+	// console.log(Number.parseInt(simulatedInputAmount));
 
-		throw new Error("no simulated output amount found");
-	}
+	// if (
+	// 	Number.parseInt(simulatedOutputAmount) <
+	// 	Number.parseInt(simulatedInputAmount)
+	// ) {
+	// 	throw new Error("losing trade");
+	// }
 
-	console.log(
-		`simulated flow: ${simulatedInputAmount} -> ${simulatedOutputAmount}`,
-	);
-
-	console.log(Number.parseInt(simulatedOutputAmount));
-	console.log(Number.parseInt(simulatedInputAmount));
-
-	if (
-		Number.parseInt(simulatedOutputAmount) <
-		Number.parseInt(simulatedInputAmount)
-	) {
-		throw new Error("losing trade");
-	}
-
-	if (simulateResponse.value.err) {
-		throw new Error(simulateResponse.value.err.toString());
-	}
+	// if (simulateResponse.value.err) {
+	// 	throw new Error(simulateResponse.value.err.toString());
+	// }
 
 	// const simulatedInputAmount = startTransferInstruction.parsed.info.tokenAmount;
 

@@ -31,6 +31,20 @@ const runArb = async () => {
 	// const log = createLog();
 
 	try {
+		console.log("simulating and getting quote...");
+
+		const quoteAndSimulateResponse = await fetch(
+			"http://127.0.0.1:8080/simulate-and-quote?inputMint=So11111111111111111111111111111111111111112&outputMint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&amount=100000000&slippageBps=0",
+		);
+
+		console.log(quoteAndSimulateResponse);
+
+		const quoteAndSimulateData = await quoteAndSimulateResponse.json();
+
+		console.log(quoteAndSimulateData);
+
+		return;
+
 		const performance = trackPerformance("checking-for-profit");
 
 		const inAmountLamports =
@@ -227,6 +241,6 @@ const runArb = async () => {
 	}
 };
 
-// await runArb();
+await runArb();
 
-setInterval(runArb, config.arbConfig.attemptInterval);
+// setInterval(runArb, config.arbConfig.attemptInterval);
