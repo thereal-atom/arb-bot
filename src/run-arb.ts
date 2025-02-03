@@ -178,7 +178,7 @@ const runArb = async () => {
 		// } else {
 
 		console.log("sending tx");
-		const signature = await stakedConnection.sendRawTransaction(
+		const signature = await connection.sendRawTransaction(
 			transaction.serialize(),
 			{
 				maxRetries: 0,
