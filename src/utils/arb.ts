@@ -152,7 +152,7 @@ export const constructArbitrageTransaction = async (
 	ixs.push(computeUnitLimitInstruction);
 
 	const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-		microLamports: 100_000,
+		microLamports: 10_000,
 	});
 	ixs.push(addPriorityFee);
 
