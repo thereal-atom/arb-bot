@@ -61,6 +61,8 @@ export const getArbitrageQuotes = async (
 		amount: options.uiAmountSol * 10 ** 9,
 	});
 
+	console.log(quote);
+
 	const reverseQuote = await getJupiterSwapQuote(jupiter, {
 		inputMint: options.mintB,
 		outputMint: WSOL_MINT,
