@@ -33,9 +33,6 @@ export const getJupiterSwapQuote = async (
 		maxAccounts: "20",
 	});
 
-	console.log(options);
-	console.log(Math.floor(options.amount).toString());
-
 	const res = await fetch(
 		`${config.jupiter.swapApiUrl}/quote-and-simulate?${searchParams}`,
 	);
@@ -47,6 +44,8 @@ export const getJupiterSwapQuote = async (
 	}
 
 	const rawQuote = await res.json();
+
+	console.log(rawQuote);
 
 	return {
 		...rawQuote,
