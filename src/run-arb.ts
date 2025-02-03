@@ -142,9 +142,9 @@ const runArb = async () => {
 
 		performance.event("constructed-transaction");
 
-		const simulateResponse = await connection.simulateTransaction(transaction);
-		console.log(simulateResponse.value.logs);
-		console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
+		// const simulateResponse = await connection.simulateTransaction(transaction);
+		// console.log(simulateResponse.value.logs);
+		// console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
 
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
