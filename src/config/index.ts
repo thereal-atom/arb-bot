@@ -2,6 +2,10 @@ import { z } from "zod";
 
 // coerce string to number
 const zodNumeric = z.string().regex(/^\d+$/).transform(Number);
+const zodBooleanic = z
+	.string()
+	.regex(/^(true|false)$/)
+	.transform(Boolean);
 
 const envSchema = z.object({
 	RPC_URL: z.string().url(),
@@ -13,6 +17,7 @@ const envSchema = z.object({
 	ARB_CONFIG_ATTEMPT_INTERVAL: zodNumeric,
 	ARB_CONFIG_LAMPORT_AMOUNT_SOL: zodNumeric,
 	ARB_CONFIG_THRESHOLD_LAMPORTS: zodNumeric,
+	ARB_CONFIG_SHOULD_SIMULATE: zodBooleanic,
 });
 
 const env = envSchema.parse(process.env);
@@ -32,5 +37,6 @@ export const config = {
 		attemptInterval: env.ARB_CONFIG_ATTEMPT_INTERVAL,
 		lamportAmountSol: env.ARB_CONFIG_LAMPORT_AMOUNT_SOL,
 		thresholdLamports: env.ARB_CONFIG_THRESHOLD_LAMPORTS,
+		shouldSimulate: env.ARB_CONFIG_SHOULD_SIMULATE,
 	},
 };
