@@ -86,7 +86,7 @@ const runArb = async () => {
 		// log.calculatedJitoTip = jitoTip;
 
 		// const threshold = config.arbConfig.thresholdLamports;
-		const threshold = 0.0005 * inAmountLamports;
+		const threshold = 0.001 * inAmountLamports;
 		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
 		if (profitLamports < threshold) {
 			// saveLog(log);
@@ -168,17 +168,17 @@ const runArb = async () => {
 		// const sendType: "bundle" | "transaction" = "transaction";
 
 		// if (sendType === "bundle") {
-		const bundleData = await sendJitoBundle([transaction]);
+		// const bundleData = await sendJitoBundle([transaction]);
 
-		performance.event("sent-bundle");
+		// performance.event("sent-bundle");
 
-		console.log("\x1b[33m%s\x1b[0m", bundleData.result);
+		// console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 		// } else {
-		// const signature = await stakedConnection.sendRawTransaction(
-		// 	transaction.serialize(),
-		// );
+		const signature = await stakedConnection.sendRawTransaction(
+			transaction.serialize(),
+		);
 
-		// console.log(`sent transaction with signature ${signature}`);
+		console.log(`sent transaction with signature ${signature}`);
 
 		// const blockhash = await connection.getLatestBlockhash();
 
