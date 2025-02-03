@@ -85,7 +85,7 @@ export const combineQuotes = (
 	combinedQuote.otherAmountThreshold = String(
 		Number.parseFloat(quote.inAmount) + jitoTip,
 	);
-	combinedQuote.outputMint = quote.inputMint;
+	// combinedQuote.outputMint = quote.inputMint;
 	combinedQuote.priceImpactPct = "0";
 	combinedQuote.routePlan = quote.routePlan.concat(reverseQuote.routePlan);
 
@@ -137,6 +137,7 @@ export const constructArbitrageTransaction = async (
 		};
 	},
 	jitoTip: number,
+	flashLoanType: "kamino" | "solend" | "none" = "kamino",
 ) => {
 	const instructions = jupiterSwapInstructions;
 
@@ -154,48 +155,58 @@ export const constructArbitrageTransaction = async (
 
 	const borrowInstructionIndex = ixs.length;
 
-	// const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
-	// 	{
-	// 		wallet,
-	// 		...flashLoanInstructionData.borrowInstructionData.walletData,
-	// 	},
-	// 	flashLoanInstructionData.borrowInstructionData.options,
-	// );
+	if (flashLoanType === "kamino") {
+		const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
+			{
+				wallet,
+				...flashLoanInstructionData.borrowInstructionData.walletData,
+			},
+			flashLoanInstructionData.borrowInstructionData.options,
+		);
+		ixs.push(borrowInstruction);
+	}
 
-	const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
-		{
-			wallet,
-			...flashLoanInstructionData.borrowInstructionData.walletData,
-		},
-		flashLoanInstructionData.borrowInstructionData.options,
-	);
-	ixs.push(borrowInstruction);
+	if (flashLoanType === "solend") {
+		const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
+			{
+				wallet,
+				...flashLoanInstructionData.borrowInstructionData.walletData,
+			},
+			flashLoanInstructionData.borrowInstructionData.options,
+		);
+		ixs.push(borrowInstruction);
+	}
 
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
 
-	// const repayInstruction = constructKaminoFlashLoanRepayInstruction(
-	// 	{
-	// 		wallet,
-	// 		...flashLoanInstructionData.repayInstructionData.walletData,
-	// 	},
-	// 	{
-	// 		...flashLoanInstructionData.repayInstructionData.options,
-	// 		borrowInstructionIndex,
-	// 	},
-	// );
+	if (flashLoanType === "kamino") {
+		const repayInstruction = constructKaminoFlashLoanRepayInstruction(
+			{
+				wallet,
+				...flashLoanInstructionData.repayInstructionData.walletData,
+			},
+			{
+				...flashLoanInstructionData.repayInstructionData.options,
+				borrowInstructionIndex,
+			},
+		);
+		ixs.push(repayInstruction);
+	}
 
-	const repayInstruction = constructSolendFlashLoanRepayInstruction(
-		{
-			wallet,
-			...flashLoanInstructionData.repayInstructionData.walletData,
-		},
-		{
-			...flashLoanInstructionData.repayInstructionData.options,
-			borrowInstructionIndex,
-		},
-	);
-	ixs.push(repayInstruction);
+	if (flashLoanType === "solend") {
+		const repayInstruction = constructSolendFlashLoanRepayInstruction(
+			{
+				wallet,
+				...flashLoanInstructionData.repayInstructionData.walletData,
+			},
+			{
+				...flashLoanInstructionData.repayInstructionData.options,
+				borrowInstructionIndex,
+			},
+		);
+		ixs.push(repayInstruction);
+	}
 
 	const tipInstruction = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,
