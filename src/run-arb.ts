@@ -180,19 +180,19 @@ const runArb = async () => {
 
 		console.log(`sent transaction with signature ${signature}`);
 
-		const blockhash = await connection.getLatestBlockhash();
+		// const blockhash = await connection.getLatestBlockhash();
 
-		const confirmation = await stakedConnection.confirmTransaction(
-			{
-				signature,
-				...blockhash,
-			},
-			"confirmed",
-		);
+		// const confirmation = await connection.confirmTransaction(
+		// 	{
+		// 		signature,
+		// 		...blockhash,
+		// 	},
+		// 	"confirmed",
+		// );
 
-		console.log(
-			`transaction confirmed with status ${JSON.stringify(confirmation)}`,
-		);
+		// console.log(
+		// 	`transaction confirmed with status ${JSON.stringify(confirmation)}`,
+		// );
 
 		performance.event("sent-transaction");
 		// }

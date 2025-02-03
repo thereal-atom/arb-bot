@@ -84,7 +84,9 @@ import { Connection } from "@solana/web3.js";
 // };
 
 export const initRpcConnection = (rpcUrl: string) => {
-	const connection = new Connection(rpcUrl);
+	const connection = new Connection(rpcUrl, {
+		commitment: "confirmed",
+	});
 
 	return connection;
 };
