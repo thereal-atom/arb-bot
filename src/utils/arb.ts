@@ -278,22 +278,22 @@ export const constructArbitrageTransaction = async (
 	// 	transaction.message.staticAccountKeys.map((key) => key.toBase58()),
 	// );
 
-	const simulateResponse = await connection.simulateTransaction(transaction, {
-		commitment: "confirmed",
-		// accounts: {
-		// 	encoding: "base64",
-		// 	addresses: addressLookupTableAccounts
-		// 		.filter((account) => account !== null)
-		// 		.map((account) => account?.key.toBase58()),
-		// 	// addresses: transaction.message.staticAccountKeys.map((key) =>
-		// 	// 	key.toBase58(),
-		// 	// ),
-		// },
-		replaceRecentBlockhash: true,
-		// innerInstructions: true,
-	});
+	// const simulateResponse = await connection.simulateTransaction(transaction, {
+	// 	commitment: "confirmed",
+	// 	// accounts: {
+	// 	// 	encoding: "base64",
+	// 	// 	addresses: addressLookupTableAccounts
+	// 	// 		.filter((account) => account !== null)
+	// 	// 		.map((account) => account?.key.toBase58()),
+	// 	// 	// addresses: transaction.message.staticAccountKeys.map((key) =>
+	// 	// 	// 	key.toBase58(),
+	// 	// 	// ),
+	// 	// },
+	// 	replaceRecentBlockhash: true,
+	// 	// innerInstructions: true,
+	// });
 
-	console.log(simulateResponse);
+	// console.log(simulateResponse);
 
 	// const simulatedSwapInstruction = (
 	// 	simulateResponse.value as typeof simulateResponse.value & {
