@@ -144,8 +144,8 @@ export const constructArbitrageTransaction = async (
 	let ixs: TransactionInstruction[] = [];
 
 	const computeUnitLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
-		// double to account for the two flash loan instructions
-		units: instructions.computeUnitLimit * 2,
+		// add 100k for the two flash loan instructions
+		units: instructions.computeUnitLimit + 100_000,
 	});
 	ixs.push(computeUnitLimitInstruction);
 
