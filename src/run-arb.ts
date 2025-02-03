@@ -151,46 +151,51 @@ const runArb = async () => {
 		performance.event("constructed-transaction");
 
 		// if (config.arbConfig.shouldSimulate) {
-		const simulateResponse = await connection.simulateTransaction(transaction);
-		// console.log(simulateResponse.value.logs);
-		console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
+		// const simulateResponse = await connection.simulateTransaction(transaction);
+		// // console.log(simulateResponse.value.logs);
+		// console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
+		// // }
+
+		// const errorLogs = simulateResponse.value.logs?.find((log) =>
+		// 	log.includes("error"),
+		// );
+		// if (errorLogs) {
+		// 	console.log(errorLogs);
+
+		// 	return;
 		// }
 
-		const errorLogs = simulateResponse.value.logs?.find((log) =>
-			log.includes("error"),
+		// const sendType: "bundle" | "transaction" = "transaction";
+
+		// if (sendType === "bundle") {
+		// 	const bundleData = await sendJitoBundle([transaction]);
+
+		// 	performance.event("sent-bundle");
+
+		// 	console.log("\x1b[33m%s\x1b[0m", bundleData.result);
+		// } else {
+		const signature = await connection.sendRawTransaction(
+			transaction.serialize(),
 		);
-		if (errorLogs) {
-			console.log(errorLogs);
 
-			return;
-		}
+		console.log(`sent transaction with signature ${signature}`);
 
-		const sendType: "bundle" | "transaction" = "transaction";
+		const blockhash = await connection.getLatestBlockhash();
 
-		if (sendType === "bundle") {
-			const bundleData = await sendJitoBundle([transaction]);
-
-			performance.event("sent-bundle");
-
-			console.log("\x1b[33m%s\x1b[0m", bundleData.result);
-		} else {
-			const signature = await connection.sendRawTransaction(
-				transaction.serialize(),
-			);
-
-			console.log(`sent transaction with signature ${signature}`);
-
-			const confirmation = await connection.confirmTransaction(
+		const confirmation = await connection.confirmTransaction(
+			{
 				signature,
-				"confirmed",
-			);
+				...blockhash,
+			},
+			"confirmed",
+		);
 
-			console.log(
-				`transaction confirmed with status ${JSON.stringify(confirmation)}`,
-			);
+		console.log(
+			`transaction confirmed with status ${JSON.stringify(confirmation)}`,
+		);
 
-			performance.event("sent-transaction");
-		}
+		performance.event("sent-transaction");
+		// }
 
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} catch (error: any) {
