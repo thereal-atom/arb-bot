@@ -16,7 +16,7 @@ const sendJitoRequest = async (
 	method: "sendBundle" | "sendTransaction" | "getInflightBundleStatuses",
 	params: (string | string[])[],
 ) => {
-	const jitoResponse = await fetch(`${config.rpc.url}${endpoint}`, {
+	const jitoResponse = await fetch(`${config.jito.url}${endpoint}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",

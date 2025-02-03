@@ -10,6 +10,7 @@ const zodBooleanic = z
 const envSchema = z.object({
 	RPC_URL: z.string().url(),
 	JUPITER_SWAP_API_URL: z.string().url(),
+	JITO_URL: z.string().url(),
 
 	WALLET_PRIVATE_KEY: z.string(),
 	WALLET_WSOL_TOKEN_ACCOUNT_ADDRESS: z.string(),
@@ -27,6 +28,9 @@ const env = envSchema.parse(process.env);
 export const config = {
 	rpc: {
 		url: env.RPC_URL,
+	},
+	jito: {
+		url: env.JITO_URL,
 	},
 	wallet: {
 		privateKey: env.WALLET_PRIVATE_KEY,
