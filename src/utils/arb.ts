@@ -258,7 +258,11 @@ export const constructArbitrageTransaction = async (
 		innerInstructions: true,
 	});
 
-	console.log(simulateResponse);
+	if (blockhash !== simulateResponse.value.replacementBlockhash.blockhash) {
+		throw new Error(
+			`blockhash mismatch. original blockhash: ${blockhash}, replacement blockhash: ${simulateResponse.value.replacementBlockhash.blockhash}`,
+		);
+	}
 
 	const simulatedSwapInstruction = (
 		simulateResponse.value as typeof simulateResponse.value & {
