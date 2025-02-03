@@ -379,7 +379,10 @@ export const constructArbitrageTransaction = async (
 		`simulated flow: ${simulatedInputAmount} -> ${simulatedOutputAmount}`,
 	);
 
-	if (simulatedOutputAmount < simulatedInputAmount) {
+	if (
+		Number.parseInt(simulatedOutputAmount) <
+		Number.parseInt(simulatedInputAmount)
+	) {
 		throw new Error("losing trade");
 	}
 
