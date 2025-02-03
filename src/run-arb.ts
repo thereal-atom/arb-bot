@@ -14,16 +14,16 @@ import { setup } from "./utils/setup";
 const { connection, jupiter, wallet, config } = setup();
 
 const mints = [
-	// "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
+	"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
 	// "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
 	// "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
 	// "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
-	// "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
-	"12ifMz54Sq4Ab4RiPezsbDYkY2fo5L3VTabfJJ2ppump",
-	"CVRR1ZcB6LRkybpUJRRcwc3LZDuc6hH7g8Uxihegpump",
-	"2Kk16bkuFH8dsd117feYaqPjBYrF8NC5GCM2VMyKpump",
-	"5ukFUcSw5NuiBMQEPucSfwBf1jKruoQvwxuuuicbpump",
-	"2sCUCJdVkmyXp4dT8sFaA9LKgSMK4yDPi9zLHiwXpump",
+	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
+	"B29VFNAL4vh7rNcZMCmsHkZaYzUaVj3UinU3dFh6pump", // Friday AI
+	"61V8vBaqAGMpgDQi4JcAwo1dmBGHsyhzodcPqnEVpump", // Arc
+	"HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
+	"5csfa95Xf8ebiCwP9joQ7mtC8KwFvnnejnYx5FbYpump", // XMONEY
+	"7XJiwLDrjzxDYdZipnJXzpr1iDTmK55XixSFAa7JgNEL", // MLG
 ];
 
 const runArb = async () => {
@@ -142,9 +142,9 @@ const runArb = async () => {
 
 		performance.event("constructed-transaction");
 
-		// const simulateResponse = await connection.simulateTransaction(transaction);
-		// console.log(simulateResponse.value.logs);
-		// console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
+		const simulateResponse = await connection.simulateTransaction(transaction);
+		console.log(simulateResponse.value.logs);
+		console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
 
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
