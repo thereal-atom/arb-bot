@@ -174,6 +174,8 @@ const runArb = async () => {
 
 		// console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 		// } else {
+		console.log("sending tx");
+		console.log(stakedConnection.rpcEndpoint);
 		const signature = await stakedConnection.sendRawTransaction(
 			transaction.serialize(),
 		);
