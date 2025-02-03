@@ -42,7 +42,7 @@ export const constructKaminoFlashLoanBorrowInstruction = (
 
 	const kaminoFlashLoanBorrowInstruction = kamino.flashBorrowReserveLiquidity(
 		{
-			liquidityAmount: new BN(50_000_000_000_000),
+			liquidityAmount: new BN(100_000_000_000),
 		},
 		{
 			userTransferAuthority: walletData.wallet.payer.publicKey,
@@ -71,7 +71,7 @@ export const constructKaminoFlashLoanRepayInstruction = (
 
 	const kaminoFlashLoanRepayInstruction = kamino.flashRepayReserveLiquidity(
 		{
-			liquidityAmount: new BN(50_000_000_000_000),
+			liquidityAmount: new BN(100_000_000_000),
 			borrowInstructionIndex: options.borrowInstructionIndex,
 		},
 		{
