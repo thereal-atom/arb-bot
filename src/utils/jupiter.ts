@@ -24,28 +24,16 @@ export const getJupiterSwapQuote = async (
 		slippageBps?: number;
 	},
 ) => {
-	const searchParams = new URLSearchParams({
+	const res = await jupiter.quoteGet({
 		inputMint: options.inputMint,
 		outputMint: options.outputMint,
-		amount: Math.floor(options.amount).toString(),
-		slippageBps: "0",
-		excludeDexes: ["Obric V2"].join(","),
-		maxAccounts: "20",
+		amount: Math.floor(options.amount),
+		slippageBps: 0,
+		excludeDexes: ["Obric V2"],
+		maxAccounts: 20,
 	});
 
-	const res = await fetch(
-		`${config.jupiter.swapApiUrl}/quote-and-simulate?${searchParams}`,
-	);
-
-	if (!res.ok) {
-		console.log(res);
-
-		throw new Error("failed to fetch quote");
-	}
-
-	const data = await res.json();
-
-	const rawQuote = data.quoteResponse;
+	const rawQuote = res;
 
 	return {
 		...rawQuote,
@@ -59,7 +47,6 @@ export const getJupiterSwapQuote = async (
 			Number.parseFloat(rawQuote.outAmount) /
 			10 ** (options.outputMint === WSOL_MINT ? 9 : 6),
 		rawQuote: rawQuote,
-		swapSimulationResult: data.swapSimulationResult,
 	};
 };
 

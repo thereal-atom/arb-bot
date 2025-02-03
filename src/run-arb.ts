@@ -52,21 +52,6 @@ const runArb = async () => {
 			uiAmountSol,
 		});
 
-		if (quote.swapSimulationResult.simulateTransactionResult.err?.length > 0) {
-			console.log(quote.swapSimulationResult.simulateTransactionResult);
-
-			throw new Error("error simulating quote");
-		}
-
-		if (
-			reverseQuote.swapSimulationResult.simulateTransactionResult.err?.length >
-			0
-		) {
-			console.log(reverseQuote.swapSimulationResult.simulateTransactionResult);
-
-			throw new Error("error simulating reverse quote");
-		}
-
 		// console.log(quote);
 		// console.log(reverseQuote);
 
@@ -195,6 +180,10 @@ const runArb = async () => {
 		console.log("sending tx");
 		const signature = await connection.sendRawTransaction(
 			transaction.serialize(),
+			{
+				maxRetries: 0,
+				preflightCommitment: "confirmed",
+			},
 		);
 
 		// console.log(
