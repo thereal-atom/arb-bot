@@ -11,7 +11,7 @@ import { getRandomNumber, trackPerformance, WSOL_MINT } from "./utils/common";
 import { setup } from "./utils/setup";
 // import { type Log, saveLog, createLog } from "./utils/logs";
 
-const { connection, jupiter, wallet, config } = setup();
+const { connection, stakedConnection, jupiter, wallet, config } = setup();
 
 const mints = [
 	"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
@@ -174,7 +174,7 @@ const runArb = async () => {
 
 		// 	console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 		// } else {
-		const signature = await connection.sendRawTransaction(
+		const signature = await stakedConnection.sendRawTransaction(
 			transaction.serialize(),
 		);
 
@@ -182,7 +182,7 @@ const runArb = async () => {
 
 		const blockhash = await connection.getLatestBlockhash();
 
-		const confirmation = await connection.confirmTransaction(
+		const confirmation = await stakedConnection.confirmTransaction(
 			{
 				signature,
 				...blockhash,

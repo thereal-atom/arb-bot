@@ -21,6 +21,7 @@ export const setup = () => {
 
 	return {
 		connection,
+		stakedConnection,
 		jupiter,
 		wallet,
 		config,
