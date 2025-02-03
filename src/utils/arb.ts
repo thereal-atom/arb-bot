@@ -289,6 +289,7 @@ export const constructArbitrageTransaction = async (
 		// 	// 	key.toBase58(),
 		// 	// ),
 		// },
+		replaceRecentBlockhash: true,
 		innerInstructions: true,
 	});
 
