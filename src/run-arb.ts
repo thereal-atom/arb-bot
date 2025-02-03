@@ -1,4 +1,4 @@
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, sendAndConfirmRawTransaction } from "@solana/web3.js";
 import {
 	combineQuotes,
 	constructArbitrageTransaction,
@@ -175,15 +175,27 @@ const runArb = async () => {
 		// console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 		// } else {
 		console.log("sending tx");
-		console.log(stakedConnection.rpcEndpoint);
-		const signature = await stakedConnection.sendRawTransaction(
-			transaction.serialize(),
+		// const signature = await stakedConnection.sendRawTransaction(
+		// 	transaction.serialize(),
+		// );
+
+		// console.log(
+		// 	"\x1b[33m%s\x1b[0m",
+		// 	`sent transaction with signature ${signature}`,
+		// );
+
+		const signature = await sendAndConfirmRawTransaction(
+			stakedConnection,
+			Buffer.from(transaction.serialize()),
+			{
+				commitment: "confirmed",
+				skipPreflight: true,
+				preflightCommitment: "confirmed",
+				maxRetries: 0,
+			},
 		);
 
-		console.log(
-			"\x1b[33m%s\x1b[0m",
-			`sent transaction with signature ${signature}`,
-		);
+		console.log(`sent transaction with signature ${signature}`);
 
 		// const blockhash = await connection.getLatestBlockhash();
 
@@ -212,6 +224,6 @@ const runArb = async () => {
 	}
 };
 
-// await runArb();
+await runArb();
 
-setInterval(runArb, config.arbConfig.attemptInterval);
+// setInterval(runArb, config.arbConfig.attemptInterval);

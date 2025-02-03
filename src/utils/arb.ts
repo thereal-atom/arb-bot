@@ -152,7 +152,7 @@ export const constructArbitrageTransaction = async (
 	ixs.push(computeUnitLimitInstruction);
 
 	const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-		microLamports: 100_000,
+		microLamports: 1_000_000,
 	});
 	ixs.push(addPriorityFee);
 
@@ -247,8 +247,6 @@ export const constructArbitrageTransaction = async (
 
 	const transaction = new VersionedTransaction(messageV0);
 	transaction.sign([wallet.payer]);
-
-	console.log(new TextDecoder().decode(transaction.signatures[0]));
 
 	return transaction;
 };
