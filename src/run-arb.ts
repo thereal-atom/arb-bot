@@ -178,7 +178,7 @@ const runArb = async () => {
 		// } else {
 
 		console.log("sending tx");
-		const signature = await connection.sendRawTransaction(
+		const signature = await stakedConnection.sendRawTransaction(
 			transaction.serialize(),
 			{
 				maxRetries: 0,
@@ -186,10 +186,10 @@ const runArb = async () => {
 			},
 		);
 
-		// console.log(
-		// 	"\x1b[33m%s\x1b[0m",
-		// 	`sent transaction with signature ${signature}`,
-		// );
+		console.log(
+			"\x1b[33m%s\x1b[0m",
+			`sent transaction with signature ${signature}`,
+		);
 
 		// const signature = await sendAndConfirmRawTransaction(
 		// 	stakedConnection,
@@ -201,8 +201,6 @@ const runArb = async () => {
 		// 		maxRetries: 0,
 		// 	},
 		// );
-
-		console.log(`sent transaction with signature ${signature}`);
 
 		// const blockhash = await connection.getLatestBlockhash();
 

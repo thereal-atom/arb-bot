@@ -253,7 +253,7 @@ export const constructArbitrageTransaction = async (
 	transaction.sign([wallet.payer]);
 
 	const simulateResponse = await connection.simulateTransaction(transaction, {
-		commitment: "finalized",
+		commitment: "confirmed",
 		replaceRecentBlockhash: true,
 		innerInstructions: true,
 	});
