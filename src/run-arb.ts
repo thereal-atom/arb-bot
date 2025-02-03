@@ -182,7 +182,7 @@ const runArb = async () => {
 			transaction.serialize(),
 			{
 				maxRetries: 0,
-				preflightCommitment: "confirmed",
+				skipPreflight: true,
 			},
 		);
 
