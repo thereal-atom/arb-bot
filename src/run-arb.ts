@@ -150,11 +150,19 @@ const runArb = async () => {
 
 		performance.event("constructed-transaction");
 
-		if (config.arbConfig.shouldSimulate) {
-			const simulateResponse =
-				await connection.simulateTransaction(transaction);
-			console.log(simulateResponse.value.logs);
-			console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
+		// if (config.arbConfig.shouldSimulate) {
+		const simulateResponse = await connection.simulateTransaction(transaction);
+		// console.log(simulateResponse.value.logs);
+		console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
+		// }
+
+		const errorLogs = simulateResponse.value.logs?.find((log) =>
+			log.includes("error"),
+		);
+		if (errorLogs) {
+			console.log(errorLogs);
+
+			return;
 		}
 
 		const sendType: "bundle" | "transaction" = "transaction";
