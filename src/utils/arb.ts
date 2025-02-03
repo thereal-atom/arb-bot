@@ -236,6 +236,7 @@ export const constructArbitrageTransaction = async (
 	);
 
 	const { blockhash } = await connection.getLatestBlockhash();
+	console.log(`blockhash: ${blockhash}`);
 	const messageV0 = new TransactionMessage({
 		payerKey: wallet.payer.publicKey,
 		recentBlockhash: blockhash,
