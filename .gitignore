@@ -47,3 +47,5 @@ package-lock.json
 /clients
 logs.json
 .env
+
+test-config.yaml
