@@ -379,6 +379,9 @@ export const constructArbitrageTransaction = async (
 		`simulated flow: ${simulatedInputAmount} -> ${simulatedOutputAmount}`,
 	);
 
+	console.log(Number.parseInt(simulatedOutputAmount));
+	console.log(Number.parseInt(simulatedInputAmount));
+
 	if (
 		Number.parseInt(simulatedOutputAmount) <
 		Number.parseInt(simulatedInputAmount)
