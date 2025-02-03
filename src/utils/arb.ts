@@ -215,16 +215,16 @@ export const constructArbitrageTransaction = async (
 		ixs.push(repayInstruction);
 	}
 
-	// const tipInstruction = SystemProgram.transfer({
-	// 	fromPubkey: wallet.payer.publicKey,
-	// 	toPubkey: new PublicKey(
-	// 		jitoTipAccountAddresses[
-	// 			Math.floor(Math.random() * jitoTipAccountAddresses.length)
-	// 		],
-	// 	),
-	// 	lamports: jitoTip,
-	// });
-	// ixs.push(tipInstruction);
+	const tipInstruction = SystemProgram.transfer({
+		fromPubkey: wallet.payer.publicKey,
+		toPubkey: new PublicKey(
+			jitoTipAccountAddresses[
+				Math.floor(Math.random() * jitoTipAccountAddresses.length)
+			],
+		),
+		lamports: jitoTip,
+	});
+	ixs.push(tipInstruction);
 
 	const addressLookupTableAccounts = await Promise.all(
 		instructions.addressLookupTableAddresses.map(async (address: string) => {
