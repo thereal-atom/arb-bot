@@ -15,8 +15,6 @@ const envSchema = z.object({
 	WALLET_WSOL_TOKEN_ACCOUNT_ADDRESS: z.string(),
 
 	ARB_CONFIG_ATTEMPT_INTERVAL: zodNumeric,
-	ARB_CONFIG_LAMPORT_AMOUNT_SOL: zodNumeric,
-	ARB_CONFIG_THRESHOLD_LAMPORTS: zodNumeric,
 	ARB_CONFIG_SHOULD_SIMULATE: zodBooleanic,
 	ARB_CONFIG_AMOUNT_MODE: z.enum(["fixed", "random"]),
 	ARB_CONFIG_AMOUNT_MINIMUM: zodNumeric,
