@@ -151,7 +151,9 @@ const runArb = async () => {
 		performance.event("constructed-transaction");
 
 		// if (config.arbConfig.shouldSimulate) {
-		const simulateResponse = await connection.simulateTransaction(transaction);
+		const simulateResponse = await connection.simulateTransaction(transaction, {
+			commitment: "confirmed",
+		});
 		// // console.log(simulateResponse.value.logs);
 		// console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
 		// // }
