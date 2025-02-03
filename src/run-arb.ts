@@ -227,6 +227,6 @@ const runArb = async () => {
 	}
 };
 
-await runArb();
+// await runArb();
 
-// setInterval(runArb, config.arbConfig.attemptInterval);
+setInterval(runArb, config.arbConfig.attemptInterval);
