@@ -151,19 +151,19 @@ const runArb = async () => {
 		performance.event("constructed-transaction");
 
 		// if (config.arbConfig.shouldSimulate) {
-		// const simulateResponse = await connection.simulateTransaction(transaction);
+		const simulateResponse = await connection.simulateTransaction(transaction);
 		// // console.log(simulateResponse.value.logs);
 		// console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
 		// // }
 
-		// const errorLogs = simulateResponse.value.logs?.find((log) =>
-		// 	log.includes("error"),
-		// );
-		// if (errorLogs) {
-		// 	console.log(errorLogs);
+		const errorLogs = simulateResponse.value.logs?.find((log) =>
+			log.includes("error"),
+		);
+		if (errorLogs) {
+			console.log(errorLogs);
 
-		// 	return;
-		// }
+			return;
+		}
 
 		// const sendType: "bundle" | "transaction" = "transaction";
 
@@ -175,7 +175,7 @@ const runArb = async () => {
 		// console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 		// } else {
 		console.log("sending tx");
-		const signature = await stakedConnection.sendRawTransaction(
+		const signature = await connection.sendRawTransaction(
 			transaction.serialize(),
 		);
 
