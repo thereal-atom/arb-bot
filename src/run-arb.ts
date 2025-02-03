@@ -7,7 +7,7 @@ import {
 } from "./utils/arb";
 import { getJupiterSwapTransactionInstructions } from "./utils/jupiter";
 import { sendJitoBundle } from "./utils/jito";
-import { trackPerformance, WSOL_MINT } from "./utils/common";
+import { getRandomNumber, trackPerformance, WSOL_MINT } from "./utils/common";
 import { setup } from "./utils/setup";
 // import { type Log, saveLog, createLog } from "./utils/logs";
 
@@ -33,11 +33,9 @@ const runArb = async () => {
 		const performance = trackPerformance("checking-for-profit");
 
 		// const inAmountLamports = config.arbConfig.lamportAmountSol;
-		// random amount from 1 to 100 sol
-		const inAmountLamports = Math.floor(
-			Math.random() * (100_000_000_000 - 1_000_000_000) + 1_000_000_000,
-		);
+		const inAmountLamports = getRandomNumber(50_000_000, 500_000_000);
 		// const inAmountLamports = 5_000_000_000;
+
 		const uiAmountSol = inAmountLamports / 10 ** 9;
 
 		// log.inAmountLamports = inAmount;
