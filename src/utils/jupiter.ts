@@ -43,9 +43,9 @@ export const getJupiterSwapQuote = async (
 		throw new Error("failed to fetch quote");
 	}
 
-	const rawQuote = await res.json();
+	const data = await res.json();
 
-	console.log(rawQuote);
+	const rawQuote = data.quoteResponse;
 
 	return {
 		...rawQuote,
@@ -59,6 +59,7 @@ export const getJupiterSwapQuote = async (
 			Number.parseFloat(rawQuote.outAmount) /
 			10 ** (options.outputMint === WSOL_MINT ? 9 : 6),
 		rawQuote: rawQuote,
+		swapSimulationResult: data.swapSimulationResult,
 	};
 };
 
