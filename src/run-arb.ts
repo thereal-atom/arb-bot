@@ -80,7 +80,7 @@ const runArb = async () => {
 		);
 
 		// const jitoTip = Math.min(Math.floor(profitLamports / 2), 3_000_000);
-		const jitoTip = profitLamports / 2;
+		const jitoTip = profitLamports * 0.9;
 		console.log(`jito tip is ${jitoTip.toLocaleString()} lamports`);
 
 		// log.calculatedJitoTip = jitoTip;
