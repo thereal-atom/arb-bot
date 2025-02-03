@@ -80,24 +80,24 @@ const runArb = async () => {
 		);
 
 		// const jitoTip = Math.min(Math.floor(profitLamports / 2), 3_000_000);
-		const jitoTip = Math.floor(profitLamports * 0.75);
-		console.log(`jito tip is ${jitoTip.toLocaleString()} lamports`);
+		// const jitoTip = Math.floor(profitLamports * 0.75);
+		// console.log(`jito tip is ${jitoTip.toLocaleString()} lamports`);
 
 		// log.calculatedJitoTip = jitoTip;
 
 		// const threshold = config.arbConfig.thresholdLamports;
-		const threshold = 0.0005 * inAmountLamports;
-		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
-		if (profitLamports < threshold) {
-			// saveLog(log);
+		// const threshold = 0.0005 * inAmountLamports;
+		// console.log(`threshold is ${threshold.toLocaleString()} lamports`);
+		// if (profitLamports < threshold) {
+		// 	// saveLog(log);
 
-			return;
-		}
+		// 	return;
+		// }
 
-		console.log(
-			"\x1b[35m%s\x1b[0m",
-			`profitable opportunity found: ${profitLamports.toFixed(5)} SOL (${profitPercent}%)`,
-		);
+		// console.log(
+		// 	"\x1b[35m%s\x1b[0m",
+		// 	`profitable opportunity found: ${profitLamports.toFixed(5)} SOL (${profitPercent}%)`,
+		// );
 
 		const combinedQuote = combineQuotes(quote.rawQuote, reverseQuote.rawQuote);
 
@@ -144,28 +144,28 @@ const runArb = async () => {
 					},
 				},
 			},
-			jitoTip,
+			0,
 			"kamino",
 		);
 
 		performance.event("constructed-transaction");
 
 		// if (config.arbConfig.shouldSimulate) {
-		const simulateResponse = await connection.simulateTransaction(transaction, {
-			commitment: "confirmed",
-		});
-		// // console.log(simulateResponse.value.logs);
-		// console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
-		// // }
+		// const simulateResponse = await connection.simulateTransaction(transaction, {
+		// 	commitment: "confirmed",
+		// }, true);
+		// // // console.log(simulateResponse.value.logs);
+		// // console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
+		// // // }
 
-		const errorLogs = simulateResponse.value.logs?.find((log) =>
-			log.includes("error"),
-		);
-		if (errorLogs) {
-			console.log(errorLogs);
+		// const errorLogs = simulateResponse.value.logs?.find((log) =>
+		// 	log.includes("error"),
+		// );
+		// if (errorLogs) {
+		// 	console.log(errorLogs);
 
-			return;
-		}
+		// 	return;
+		// }
 
 		// const sendType: "bundle" | "transaction" = "transaction";
 
@@ -176,6 +176,7 @@ const runArb = async () => {
 
 		// console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 		// } else {
+
 		console.log("sending tx");
 		const signature = await connection.sendRawTransaction(
 			transaction.serialize(),
@@ -226,6 +227,6 @@ const runArb = async () => {
 	}
 };
 
-// await runArb();
+await runArb();
 
-setInterval(runArb, config.arbConfig.attemptInterval);
+// setInterval(runArb, config.arbConfig.attemptInterval);
