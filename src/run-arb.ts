@@ -33,7 +33,7 @@ const runArb = async () => {
 		const performance = trackPerformance("checking-for-profit");
 
 		// const inAmountLamports = config.arbConfig.lamportAmountSol;
-		const inAmountLamports = getRandomNumber(1_000_000_000, 10_000_000_000);
+		const inAmountLamports = getRandomNumber(100_000_000, 1_000_000_000);
 		// const inAmountLamports = 5_000_000_000;
 
 		const uiAmountSol = inAmountLamports / 10 ** 9;
