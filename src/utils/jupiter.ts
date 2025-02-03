@@ -29,9 +29,12 @@ export const getJupiterSwapQuote = async (
 		outputMint: options.outputMint,
 		amount: Math.floor(options.amount).toString(),
 		slippageBps: "0",
-		// excludeDexes: ["Obric V2"].join(","),
+		excludeDexes: ["Obric V2"].join(","),
 		maxAccounts: "20",
 	});
+
+	console.log(options);
+	console.log(Math.floor(options.amount).toString());
 
 	const res = await fetch(
 		`${config.jupiter.swapApiUrl}/quote-and-simulate?${searchParams}`,
