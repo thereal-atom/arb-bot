@@ -109,6 +109,8 @@ const runArb = async () => {
 
 		const wsolTokenAccountAddress = config.wallet.wsolTokenAccountAddress;
 
+		console.log(`jupiter requested ${instructions.computeUnitLimit} CUs`);
+
 		const transaction = await constructArbitrageTransaction(
 			connection,
 			wallet,
