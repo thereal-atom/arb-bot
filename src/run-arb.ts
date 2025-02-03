@@ -180,7 +180,10 @@ const runArb = async () => {
 			transaction.serialize(),
 		);
 
-		console.log(`sent transaction with signature ${signature}`);
+		console.log(
+			"\x1b[33m%s\x1b[0m",
+			`sent transaction with signature ${signature}`,
+		);
 
 		// const blockhash = await connection.getLatestBlockhash();
 
