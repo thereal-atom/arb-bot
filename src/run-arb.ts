@@ -33,7 +33,7 @@ const runArb = async () => {
 		const performance = trackPerformance("checking-for-profit");
 
 		// const inAmountLamports = config.arbConfig.lamportAmountSol;
-		const inAmountLamports = getRandomNumber(50_000_000, 500_000_000);
+		const inAmountLamports = getRandomNumber(1_000_000_000, 10_000_000_000);
 		// const inAmountLamports = 5_000_000_000;
 
 		const uiAmountSol = inAmountLamports / 10 ** 9;
@@ -139,8 +139,8 @@ const runArb = async () => {
 
 		performance.event("constructed-transaction");
 
-		// const simulateResponse = await connection.simulateTransaction(transaction);
-		// console.log(simulateResponse.value.logs);
+		const simulateResponse = await connection.simulateTransaction(transaction);
+		console.log(simulateResponse.value.logs);
 
 		// log.transaction = {
 		// 	fetchedAt: Date.now(),
