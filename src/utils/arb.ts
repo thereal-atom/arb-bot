@@ -146,7 +146,7 @@ export const constructArbitrageTransaction = async (
 	const computeUnitLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
 		units: 475_000,
 	});
-	console.log(`compute unit limit is ${instructions.computeUnitLimit} CUs`);
+	// console.log(`compute unit limit is ${instructions.computeUnitLimit} CUs`);
 	ixs.push(computeUnitLimitInstruction);
 
 	const setupInstructions =
