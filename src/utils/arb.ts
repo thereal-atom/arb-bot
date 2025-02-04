@@ -296,13 +296,16 @@ export const constructTipTransaction = (
 		lamports: options.amount,
 	});
 
-	const returnMinimumAmountInstruction = SystemProgram.transfer({
-		fromPubkey: options.wallet.publicKey,
-		toPubkey: mainWallet.publicKey,
-		lamports: options.minimumAmount,
-	});
+	// const returnMinimumAmountInstruction = SystemProgram.transfer({
+	// 	fromPubkey: options.wallet.publicKey,
+	// 	toPubkey: mainWallet.publicKey,
+	// 	lamports: options.minimumAmount,
+	// });
 
-	transaction.add(tipInstruction, returnMinimumAmountInstruction);
+	transaction.add(
+		tipInstruction,
+		// returnMinimumAmountInstruction,
+	);
 
 	transaction.recentBlockhash = blockhash;
 	transaction.sign(options.wallet);
