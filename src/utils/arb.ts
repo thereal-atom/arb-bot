@@ -222,12 +222,12 @@ export const constructArbitrageTransaction = async (
 			? tipData.jitoTip
 			: minimumAmount + tipData.jitoTip;
 
-	const tipInstruction = SystemProgram.transfer({
+	const sendTipToTippingWalletIx = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,
 		toPubkey: tipWallet.publicKey,
 		lamports: sendAmount,
 	});
-	ixs.push(tipInstruction);
+	ixs.push(sendTipToTippingWalletIx);
 
 	// const tipInstruction = SystemProgram.transfer({
 	// 	fromPubkey: wallet.payer.publicKey,
@@ -239,18 +239,6 @@ export const constructArbitrageTransaction = async (
 	// 	lamports: tipData.jitoTip,
 	// });
 	// ixs.push(tipInstruction);
-
-	if (tipData.jitoTip > minimumAmount) {
-		// if the tip amount is bigger than the rent amount, send the whole tip to the tipping account which sends the tip with no issues
-		// otherwise, need to send the tip plus the minimum rent amount - send the tip,
-		// the amount left will be the minimum rent amount which is fine, and then that amount will be sent back to the wallet
-		const sendBackInstruction = SystemProgram.transfer({
-			fromPubkey: tipWallet.publicKey,
-			toPubkey: wallet.publicKey,
-			lamports: minimumAmount,
-		});
-		ixs.push(sendBackInstruction);
-	}
 
 	const addressLookupTableAccounts = await Promise.all(
 		instructions.addressLookupTableAddresses.map(async (address: string) => {
@@ -279,6 +267,7 @@ export const constructArbitrageTransaction = async (
 		arbTransaction: transaction,
 		blockhash,
 		tipWallet,
+		minimumAmount,
 	};
 };
 
@@ -286,8 +275,10 @@ export const constructTipTransaction = (
 	options: {
 		amount: number;
 		wallet: Keypair;
+		minimumAmount: number;
 	},
 	blockhash: Blockhash,
+	mainWallet: Wallet,
 ) => {
 	const transaction = new Transaction();
 
@@ -305,7 +296,13 @@ export const constructTipTransaction = (
 		lamports: options.amount,
 	});
 
-	transaction.add(tipInstruction);
+	const returnMinimumAmountInstruction = SystemProgram.transfer({
+		fromPubkey: options.wallet.publicKey,
+		toPubkey: mainWallet.publicKey,
+		lamports: options.minimumAmount,
+	});
+
+	transaction.add(tipInstruction, returnMinimumAmountInstruction);
 
 	transaction.recentBlockhash = blockhash;
 	transaction.sign(options.wallet);

@@ -123,7 +123,7 @@ const runArb = async () => {
 
 		const wsolTokenAccountAddress = config.wallet.wsolTokenAccountAddress;
 
-		const { arbTransaction, blockhash, tipWallet } =
+		const { arbTransaction, blockhash, tipWallet, minimumAmount } =
 			await constructArbitrageTransaction(
 				connection,
 				wallet,
@@ -162,8 +162,10 @@ const runArb = async () => {
 			{
 				amount: Math.abs(jitoTip),
 				wallet: tipWallet,
+				minimumAmount,
 			},
 			blockhash,
+			wallet,
 		);
 
 		// const simulateRes = await connection.simulateTransaction(tipTransaction);
