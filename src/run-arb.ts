@@ -12,6 +12,8 @@ import { getRandomNumber, trackPerformance, WSOL_MINT } from "./utils/common";
 import { setup } from "./utils/setup";
 import { Keypair } from "@solana/web3.js";
 import { Transaction } from "@solana/web3.js";
+import { SystemProgram } from "@solana/web3.js";
+import { Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 // import { type Log, saveLog, createLog } from "./utils/logs";
 
 const { connection, stakedConnection, jupiter, wallet, config } = setup();
@@ -156,23 +158,20 @@ const runArb = async () => {
 
 		performance.event("constructed-transaction");
 
-		// const tipTransaction = constructTipTransaction(
-		// 	{
-		// 		amount: Math.abs(jitoTip),
-		// 		wallet: tipWallet,
-		// 	},
-		// 	blockhash,
-		// );
+		const tipTransaction = constructTipTransaction(
+			{
+				amount: Math.abs(jitoTip),
+				wallet: tipWallet,
+			},
+			blockhash,
+		);
 
 		// const simulateRes = await connection.simulateTransaction(tipTransaction);
 		// console.log(simulateRes);
 
 		performance.event("constructed-tip-transaction");
 
-		const bundleData = await sendJitoBundle([
-			arbTransaction,
-			// tipTransaction,
-		]);
+		const bundleData = await sendJitoBundle([arbTransaction, tipTransaction]);
 
 		performance.event("sent-bundle");
 
@@ -189,6 +188,6 @@ const runArb = async () => {
 	}
 };
 
-// await runArb();
+await runArb();
 
-setInterval(runArb, config.arbConfig.attemptInterval);
+// setInterval(runArb, config.arbConfig.attemptInterval);

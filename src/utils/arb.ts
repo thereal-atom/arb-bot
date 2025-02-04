@@ -193,7 +193,7 @@ export const constructArbitrageTransaction = async (
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
 
-	const swapInstructionIndex = ixs.length - 1;
+	// const swapInstructionIndex = ixs.length - 1;
 
 	const repayInstruction = constructKaminoFlashLoanRepayInstruction(
 		{
@@ -213,27 +213,44 @@ export const constructArbitrageTransaction = async (
 	} = await createTipWallet(connection, wallet.payer);
 	// ixs.push(createTipAccountInstruction);
 
-	// console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
+	console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
 
-	// const minimumBalance = await connection.getMinimumBalanceForRentExemption(0);
+	const minimumAmount = await connection.getMinimumBalanceForRentExemption(0);
+
+	const sendAmount =
+		tipData.jitoTip > minimumAmount
+			? tipData.jitoTip
+			: minimumAmount + tipData.jitoTip;
+
+	const tipInstruction = SystemProgram.transfer({
+		fromPubkey: wallet.payer.publicKey,
+		toPubkey: tipWallet.publicKey,
+		lamports: sendAmount,
+	});
+	ixs.push(tipInstruction);
 
 	// const tipInstruction = SystemProgram.transfer({
 	// 	fromPubkey: wallet.payer.publicKey,
-	// 	toPubkey: tipWallet.publicKey,
+	// 	toPubkey: new PublicKey(
+	// 		jitoTipAccountAddresses[
+	// 			Math.floor(Math.random() * jitoTipAccountAddresses.length)
+	// 		],
+	// 	),
 	// 	lamports: tipData.jitoTip,
 	// });
 	// ixs.push(tipInstruction);
 
-	const tipInstruction = SystemProgram.transfer({
-		fromPubkey: wallet.payer.publicKey,
-		toPubkey: new PublicKey(
-			jitoTipAccountAddresses[
-				Math.floor(Math.random() * jitoTipAccountAddresses.length)
-			],
-		),
-		lamports: tipData.jitoTip,
-	});
-	ixs.push(tipInstruction);
+	if (tipData.jitoTip > minimumAmount) {
+		// if the tip amount is bigger than the rent amount, send the whole tip to the tipping account which sends the tip with no issues
+		// otherwise, need to send the tip plus the minimum rent amount - send the tip,
+		// the amount left will be the minimum rent amount which is fine, and then that amount will be sent back to the wallet
+		const sendBackInstruction = SystemProgram.transfer({
+			fromPubkey: tipWallet.publicKey,
+			toPubkey: wallet.publicKey,
+			lamports: minimumAmount,
+		});
+		ixs.push(sendBackInstruction);
+	}
 
 	const addressLookupTableAccounts = await Promise.all(
 		instructions.addressLookupTableAddresses.map(async (address: string) => {
@@ -256,7 +273,7 @@ export const constructArbitrageTransaction = async (
 	const transaction = new VersionedTransaction(messageV0);
 	transaction.sign([wallet.payer]);
 
-	await simulateTransaction(connection, transaction, swapInstructionIndex);
+	// await simulateTransaction(connection, transaction, swapInstructionIndex);
 
 	return {
 		arbTransaction: transaction,
