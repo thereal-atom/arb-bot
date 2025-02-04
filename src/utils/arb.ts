@@ -2,6 +2,8 @@ import {
 	type Connection,
 	type TransactionInstruction,
 	type Blockhash,
+	type ParsedInnerInstruction,
+	type ParsedInstruction,
 	Keypair,
 	ComputeBudgetProgram,
 	PublicKey,
@@ -191,6 +193,8 @@ export const constructArbitrageTransaction = async (
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
 
+	const swapInstructionIndex = ixs.length - 1;
+
 	const repayInstruction = constructKaminoFlashLoanRepayInstruction(
 		{
 			wallet,
@@ -252,6 +256,8 @@ export const constructArbitrageTransaction = async (
 	const transaction = new VersionedTransaction(messageV0);
 	transaction.sign([wallet.payer]);
 
+	await simulateTransaction(connection, transaction, swapInstructionIndex);
+
 	return {
 		arbTransaction: transaction,
 		blockhash,
@@ -288,4 +294,105 @@ export const constructTipTransaction = (
 	transaction.sign(options.wallet);
 
 	return transaction;
+};
+
+const simulateTransaction = async (
+	connection: Connection,
+	transaction: VersionedTransaction,
+	swapInstructionIndex: number,
+) => {
+	const simulateResponse = await connection.simulateTransaction(transaction, {
+		commitment: "confirmed",
+		replaceRecentBlockhash: true,
+		innerInstructions: true,
+	});
+
+	if (simulateResponse.value.err) {
+		console.log(simulateResponse.value.err);
+		console.log(simulateResponse.value.logs);
+
+		throw new Error("error simulating tx");
+	}
+
+	const simulatedSwapInstruction = (
+		simulateResponse.value as typeof simulateResponse.value & {
+			innerInstructions: ParsedInnerInstruction[];
+		}
+	).innerInstructions.find((ix) => ix.index === swapInstructionIndex);
+
+	if (!simulatedSwapInstruction) {
+		throw new Error("no simulated swap instruction found");
+	}
+
+	const simulatedSwapInstructionInnerInstructions =
+		simulatedSwapInstruction?.instructions;
+
+	const transferInstructions = simulatedSwapInstructionInnerInstructions.filter(
+		(ix) =>
+			ix.programId.toBase58() === "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+	) as ParsedInstruction[];
+
+	// transferInstructions.forEach(console.log);
+
+	const instructionsWithWsolSource = transferInstructions.filter(
+		(ix) =>
+			ix.parsed.info.source === "9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
+	);
+	const instructionsWithWsolDestination = transferInstructions.filter(
+		(ix) =>
+			ix.parsed.info.destination ===
+			"9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
+	);
+
+	if (
+		instructionsWithWsolSource.length !== 1 ||
+		instructionsWithWsolDestination.length !== 1
+	) {
+		throw new Error(
+			`no wsol transfer instructions found. found ${instructionsWithWsolSource.length} ixs with wsol source. found ${instructionsWithWsolDestination.length} ixs with wsol destination.`,
+		);
+	}
+
+	const startTransferInstruction = instructionsWithWsolSource[0];
+	const endTransferInstruction = instructionsWithWsolDestination[0];
+
+	if (!startTransferInstruction) {
+		throw new Error("no start transfer instruction found");
+	}
+
+	if (!endTransferInstruction) {
+		throw new Error("no end transfer instruction found");
+	}
+
+	const simulatedInputAmount =
+		"tokenAmount" in startTransferInstruction.parsed.info
+			? startTransferInstruction.parsed.info.tokenAmount.amount
+			: startTransferInstruction.parsed.info.amount;
+	const simulatedOutputAmount =
+		"tokenAmount" in endTransferInstruction.parsed.info
+			? endTransferInstruction.parsed.info.tokenAmount.amount
+			: endTransferInstruction.parsed.info.amount;
+
+	if (!simulatedInputAmount) {
+		console.log(startTransferInstruction);
+
+		throw new Error("no simulated input amount found");
+	}
+
+	if (!simulatedOutputAmount) {
+		console.log(endTransferInstruction);
+
+		throw new Error("no simulated output amount found");
+	}
+
+	console.log(
+		`simulated flow: ${simulatedInputAmount} -> ${simulatedOutputAmount}`,
+	);
+
+	if (
+		Number.parseInt(simulatedOutputAmount) <
+		Number.parseInt(simulatedInputAmount)
+	) {
+		throw new Error("losing trade");
+	}
 };
