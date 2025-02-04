@@ -10,10 +10,6 @@ import { getJupiterSwapTransactionInstructions } from "./utils/jupiter";
 import { sendJitoBundle } from "./utils/jito";
 import { getRandomNumber, trackPerformance, WSOL_MINT } from "./utils/common";
 import { setup } from "./utils/setup";
-import { Keypair } from "@solana/web3.js";
-import { Transaction } from "@solana/web3.js";
-import { SystemProgram } from "@solana/web3.js";
-import { Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 // import { type Log, saveLog, createLog } from "./utils/logs";
 
 const { connection, stakedConnection, jupiter, wallet, config } = setup();

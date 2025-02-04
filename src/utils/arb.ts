@@ -33,6 +33,7 @@ import {
 	type JupiterApiClient,
 	getJupiterSwapQuote,
 } from "./jupiter";
+import { getSimulationComputeUnits } from "@solana-developers/helpers";
 
 const jitoTipAccountAddresses = [
 	"96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5",
@@ -256,6 +257,22 @@ export const constructArbitrageTransaction = async (
 	);
 
 	const { blockhash } = await connection.getLatestBlockhash();
+
+	const simulationComputeUnits = await getSimulationComputeUnits(
+		connection,
+		ixs,
+		wallet.payer.publicKey,
+		addressLookupTableAccounts.filter((account) => account !== null),
+	);
+
+	if (simulationComputeUnits) {
+		ixs.unshift(
+			ComputeBudgetProgram.setComputeUnitLimit({
+				units: simulationComputeUnits * 1.1,
+			}),
+		);
+	}
+
 	const messageV0 = new TransactionMessage({
 		payerKey: wallet.payer.publicKey,
 		recentBlockhash: blockhash,
