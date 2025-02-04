@@ -9,7 +9,6 @@ export const setup = () => {
 	console.log("setting up arb bot...");
 
 	const connection = initRpcConnection(config.rpc.url);
-	const stakedConnection = initRpcConnection("http://173.231.43.226:4040");
 
 	const jupiter = createJupiterApiClient({
 		basePath: config.jupiter.swapApiUrl,
@@ -21,7 +20,6 @@ export const setup = () => {
 
 	return {
 		connection,
-		stakedConnection,
 		jupiter,
 		wallet,
 		config,

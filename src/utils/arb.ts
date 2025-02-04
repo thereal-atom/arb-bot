@@ -170,11 +170,11 @@ export const constructArbitrageTransaction = async (
 
 	let ixs: TransactionInstruction[] = [];
 
-	// const computeUnitLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
-	// 	units: 500_000,
-	// });
+	const computeUnitLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
+		units: 500_000,
+	});
 	// console.log(`compute unit limit is ${instructions.computeUnitLimit} CUs`);
-	// ixs.push(computeUnitLimitInstruction);
+	ixs.push(computeUnitLimitInstruction);
 
 	const setupInstructions =
 		instructions.setupInstructions.map(instructionFormat);
@@ -236,17 +236,6 @@ export const constructArbitrageTransaction = async (
 	});
 	ixs.push(sendTipToTippingWalletIx);
 
-	// const tipInstruction = SystemProgram.transfer({
-	// 	fromPubkey: wallet.payer.publicKey,
-	// 	toPubkey: new PublicKey(
-	// 		jitoTipAccountAddresses[
-	// 			Math.floor(Math.random() * jitoTipAccountAddresses.length)
-	// 		],
-	// 	),
-	// 	lamports: tipData.jitoTip,
-	// });
-	// ixs.push(tipInstruction);
-
 	const addressLookupTableAccounts = await Promise.all(
 		instructions.addressLookupTableAddresses.map(async (address: string) => {
 			const result = await connection.getAddressLookupTable(
@@ -258,20 +247,20 @@ export const constructArbitrageTransaction = async (
 
 	const { blockhash } = await connection.getLatestBlockhash();
 
-	const simulationComputeUnits = await getSimulationComputeUnits(
-		connection,
-		ixs,
-		wallet.payer.publicKey,
-		addressLookupTableAccounts.filter((account) => account !== null),
-	);
+	// const simulationComputeUnits = await getSimulationComputeUnits(
+	// 	connection,
+	// 	ixs,
+	// 	wallet.payer.publicKey,
+	// 	addressLookupTableAccounts.filter((account) => account !== null),
+	// );
 
-	if (simulationComputeUnits) {
-		ixs.unshift(
-			ComputeBudgetProgram.setComputeUnitLimit({
-				units: simulationComputeUnits * 1.1,
-			}),
-		);
-	}
+	// if (simulationComputeUnits) {
+	// 	ixs.unshift(
+	// 		ComputeBudgetProgram.setComputeUnitLimit({
+	// 			units: simulationComputeUnits * 1.1,
+	// 		}),
+	// 	);
+	// }
 
 	const messageV0 = new TransactionMessage({
 		payerKey: wallet.payer.publicKey,
