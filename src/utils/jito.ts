@@ -57,42 +57,42 @@ export const sendJitoTransaction = async (
 export const sendJitoBundle = async (
 	transactions: VersionedTransaction[],
 ): Promise<JitoResponse<"string">> => {
-	const jitoBundleResponses = await Promise.all([
-		// sendJitoRequest("/api/v1/bundles", "sendBundle", [
-		// 	transactions.map((tx) => bs58.encode(tx.serialize())),
-		// 	"ny",
-		// ]),
-		...[
-			"https://amsterdam.mainnet.block-engine.jito.wtf",
-			"https://frankfurt.mainnet.block-engine.jito.wtf",
-			"https://ny.mainnet.block-engine.jito.wtf",
-			"https://tokyo.mainnet.block-engine.jito.wtf",
-			"https://slc.mainnet.block-engine.jito.wtf",
-		].map((url) =>
-			fetch(`${url}/api/v1/bundles`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					id: 1,
-					jsonrpc: "2.0",
-					method: "sendBundle",
-					params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
-				}),
-				proxy: "http://mtfqwhxi-rotate:9bbfkcd03q6q@p.webshare.io:80",
-			}),
-		),
-	]);
+	// const jitoBundleResponses = await Promise.all([
+	// 	// sendJitoRequest("/api/v1/bundles", "sendBundle", [
+	// 	// 	transactions.map((tx) => bs58.encode(tx.serialize())),
+	// 	// 	"ny",
+	// 	// ]),
+	// 	...[
+	// 		"https://amsterdam.mainnet.block-engine.jito.wtf",
+	// 		"https://frankfurt.mainnet.block-engine.jito.wtf",
+	// 		"https://ny.mainnet.block-engine.jito.wtf",
+	// 		"https://tokyo.mainnet.block-engine.jito.wtf",
+	// 		"https://slc.mainnet.block-engine.jito.wtf",
+	// 	].map((url) =>
+	// 		fetch(`${url}/api/v1/bundles`, {
+	// 			method: "POST",
+	// 			headers: {
+	// 				"Content-Type": "application/json",
+	// 			},
+	// 			body: JSON.stringify({
+	// 				id: 1,
+	// 				jsonrpc: "2.0",
+	// 				method: "sendBundle",
+	// 				params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
+	// 			}),
+	// 			proxy: "http://mtfqwhxi-rotate:9bbfkcd03q6q@p.webshare.io:80",
+	// 		}),
+	// 	),
+	// ]);
 
-	// const jitoBundleResponse = response[0];
+	// // const jitoBundleResponse = response[0];
 
-	// const otherJitoBundleResponses = response.slice(1);
+	// // const otherJitoBundleResponses = response.slice(1);
 
-	const jitoBundleData = await Promise.all(
-		jitoBundleResponses.map((res) => res.json()),
-	);
-	console.log(jitoBundleData);
+	// const jitoBundleData = await Promise.all(
+	// 	jitoBundleResponses.map((res) => res.json()),
+	// );
+	// console.log(jitoBundleData);
 
 	// const jitoBundleResponse = await sendJitoRequest(
 	// 	"/api/v1/bundles",
@@ -100,7 +100,34 @@ export const sendJitoBundle = async (
 	// 	[transactions.map((tx) => bs58.encode(tx.serialize())), "ny"],
 	// );
 
-	return jitoBundleData[0];
+	// return jitoBundleData[0];
+
+	const res = await fetch(
+		"https://ny.mainnet.block-engine.jito.wtf/api/v1/bundles",
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				id: 1,
+				jsonrpc: "2.0",
+				method: "sendBundle",
+				params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
+			}),
+			proxy: "http://mtfqwhxi-rotate:9bbfkcd03q6q@p.webshare.io:80",
+		},
+	);
+
+	if (!res.ok) {
+		console.log(res);
+
+		throw new Error("failed to send bundle");
+	}
+
+	const data = await res.json();
+
+	return data;
 };
 
 export const checkJitoBundleStatus = async (
