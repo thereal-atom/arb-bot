@@ -54,7 +54,7 @@ export const sendJitoTransaction = async (
 	return jitoTransactionResponse;
 };
 
-const proxyUrls = [
+let proxyUrls = [
 	"http://ss464995:hKAyzXfFU5@154.3.209.249:9163",
 	"http://ss568497:b1uJuVM5tH@154.3.209.25:2609",
 	"http://ss385755:bkz2UYAupV@154.3.209.250:4332",
@@ -89,6 +89,11 @@ const proxyUrls = [
 export const sendJitoBundle = async (
 	transactions: (VersionedTransaction | Transaction)[],
 ): Promise<JitoResponse<"string">> => {
+	const proxyUrl = proxyUrls[0];
+
+	console.log(`using proxyurl: ${proxyUrl}`);
+	console.log(`next is: ${proxyUrls[1]}`);
+
 	const res = await fetch(
 		"https://ny.mainnet.block-engine.jito.wtf/api/v1/bundles",
 		// config.jito.url,
@@ -103,9 +108,12 @@ export const sendJitoBundle = async (
 				method: "sendBundle",
 				params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
 			}),
-			proxy: proxyUrls[Math.floor(Math.random() * proxyUrls.length)],
+			proxy: proxyUrls,
 		},
 	);
+
+	proxyUrls.shift();
+	proxyUrls.push(proxyUrl);
 
 	if (!res.ok) {
 		console.log(res);
