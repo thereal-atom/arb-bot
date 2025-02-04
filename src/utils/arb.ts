@@ -116,21 +116,28 @@ const instructionFormat = (instruction: Instruction) => {
 	};
 };
 
-export const createTipWallet = async () => {
-	const tipWallet = new Keypair();
-	// const createAccountParams = {
-	// 	fromPubkey: fromWallet.publicKey,
-	// 	newAccountPubkey: tipWallet.publicKey,
-	// 	lamports: rentExemptionAmount,
-	// 	space,
-	// 	programId: SystemProgram.programId,
-	// };
+export const createTipWallet = async (
+	connection: Connection,
+	fromWallet: Keypair,
+) => {
+	const space = 0;
+	const rentExemptionAmount =
+		await connection.getMinimumBalanceForRentExemption(space);
 
-	// const createTipAccountInstruction =
-	// 	SystemProgram.createAccount(createAccountParams);
+	const tipWallet = new Keypair();
+	const createAccountParams = {
+		fromPubkey: fromWallet.publicKey,
+		newAccountPubkey: tipWallet.publicKey,
+		lamports: rentExemptionAmount,
+		space,
+		programId: SystemProgram.programId,
+	};
+
+	const createTipAccountInstruction =
+		SystemProgram.createAccount(createAccountParams);
 
 	return {
-		// createTipAccountInstruction,
+		createTipAccountInstruction,
 		tipWallet,
 	};
 };
@@ -195,16 +202,20 @@ export const constructArbitrageTransaction = async (
 	);
 	ixs.push(repayInstruction);
 
-	const { tipWallet } = await createTipWallet();
+	const { createTipAccountInstruction, tipWallet } = await createTipWallet(
+		connection,
+		wallet.payer,
+	);
+	ixs.push(createTipAccountInstruction);
 
 	console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
 
-	const minimumBalance = await connection.getMinimumBalanceForRentExemption(0);
+	// const minimumBalance = await connection.getMinimumBalanceForRentExemption(0);
 
 	const tipInstruction = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,
 		toPubkey: tipWallet.publicKey,
-		lamports: tipData.jitoTip + minimumBalance,
+		lamports: tipData.jitoTip,
 	});
 	ixs.push(tipInstruction);
 
