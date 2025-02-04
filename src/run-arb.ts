@@ -2,6 +2,7 @@ import { PublicKey, sendAndConfirmRawTransaction } from "@solana/web3.js";
 import {
 	combineQuotes,
 	constructArbitrageTransaction,
+	constructTipTransaction,
 	getArbitrageQuotes,
 	getQuoteProfit,
 } from "./utils/arb";
@@ -9,22 +10,24 @@ import { getJupiterSwapTransactionInstructions } from "./utils/jupiter";
 import { sendJitoBundle } from "./utils/jito";
 import { getRandomNumber, trackPerformance, WSOL_MINT } from "./utils/common";
 import { setup } from "./utils/setup";
+import { Keypair } from "@solana/web3.js";
+import { Transaction } from "@solana/web3.js";
 // import { type Log, saveLog, createLog } from "./utils/logs";
 
 const { connection, stakedConnection, jupiter, wallet, config } = setup();
 
 const mints = [
 	"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
-	"Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
-	"2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
-	"USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA", // USDS
-	"J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
-	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
-	"B29VFNAL4vh7rNcZMCmsHkZaYzUaVj3UinU3dFh6pump", // Friday AI
-	"61V8vBaqAGMpgDQi4JcAwo1dmBGHsyhzodcPqnEVpump", // Arc
-	"HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
-	"5csfa95Xf8ebiCwP9joQ7mtC8KwFvnnejnYx5FbYpump", // XMONEY
-	"7XJiwLDrjzxDYdZipnJXzpr1iDTmK55XixSFAa7JgNEL", // MLG
+	// "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
+	// "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
+	// "USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA", // USDS
+	// "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
+	// "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
+	// "B29VFNAL4vh7rNcZMCmsHkZaYzUaVj3UinU3dFh6pump", // Friday AI
+	// "61V8vBaqAGMpgDQi4JcAwo1dmBGHsyhzodcPqnEVpump", // Arc
+	// "HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
+	// "5csfa95Xf8ebiCwP9joQ7mtC8KwFvnnejnYx5FbYpump", // XMONEY
+	// "7XJiwLDrjzxDYdZipnJXzpr1iDTmK55XixSFAa7JgNEL", // MLG
 ];
 
 const runArb = async () => {
@@ -118,107 +121,61 @@ const runArb = async () => {
 
 		const wsolTokenAccountAddress = config.wallet.wsolTokenAccountAddress;
 
-		// console.log(`jupiter requested ${instructions.computeUnitLimit} CUs`);
+		const { arbTransaction, blockhash, tipWallet } =
+			await constructArbitrageTransaction(
+				connection,
+				wallet,
+				instructions,
+				{
+					borrowInstructionData: {
+						walletData: {
+							mintTokenAccount: new PublicKey(wsolTokenAccountAddress),
+						},
+						options: {
+							amount: inAmountLamports,
+							mint: WSOL_MINT,
+						},
+					},
+					repayInstructionData: {
+						walletData: {
+							mintTokenAccount: new PublicKey(wsolTokenAccountAddress),
+						},
+						options: {
+							amount: inAmountLamports,
+							mint: WSOL_MINT,
+						},
+					},
+				},
+				{
+					jitoTip: Math.abs(jitoTip),
+				},
+			);
 
-		const transaction = await constructArbitrageTransaction(
-			connection,
-			wallet,
-			instructions,
-			{
-				borrowInstructionData: {
-					walletData: {
-						mintTokenAccount: new PublicKey(wsolTokenAccountAddress),
-					},
-					options: {
-						amount: inAmountLamports,
-						mint: WSOL_MINT,
-					},
-				},
-				repayInstructionData: {
-					walletData: {
-						mintTokenAccount: new PublicKey(wsolTokenAccountAddress),
-					},
-					options: {
-						amount: inAmountLamports,
-						mint: WSOL_MINT,
-					},
-				},
-			},
-			jitoTip,
-			"kamino",
-		);
+		const simRes = await connection.simulateTransaction(arbTransaction);
+		console.log(simRes.value.err);
 
 		performance.event("constructed-transaction");
 
-		// if (config.arbConfig.shouldSimulate) {
-		// const simulateResponse = await connection.simulateTransaction(transaction, {
-		// 	commitment: "confirmed",
-		// }, true);
-		// // // console.log(simulateResponse.value.logs);
-		// // console.log(`consumed ${simulateResponse.value.unitsConsumed} CUs`);
-		// // // }
+		const tipTransaction = constructTipTransaction(
+			{
+				amount: Math.abs(jitoTip),
+				wallet: tipWallet,
+			},
+			blockhash,
+		);
 
-		// const errorLogs = simulateResponse.value.logs?.find((log) =>
-		// 	log.includes("error"),
-		// );
-		// if (errorLogs) {
-		// 	console.log(errorLogs);
+		// const simulateRes = await connection.simulateTransaction(tipTransaction);
+		// console.log(simulateRes);
 
-		// 	return;
-		// }
+		performance.event("constructed-tip-transaction");
 
-		// const sendType: "bundle" | "transaction" = "transaction";
-
-		// if (sendType === "bundle") {
-		const bundleData = await sendJitoBundle([transaction]);
+		const bundleData = await sendJitoBundle([arbTransaction, tipTransaction]);
 
 		performance.event("sent-bundle");
 
 		console.log("\x1b[33m%s\x1b[0m", bundleData.result);
-		// } else {
-
-		// console.log("sending tx");
-		// const signature = await connection.sendRawTransaction(
-		// 	transaction.serialize(),
-		// 	{
-		// 		maxRetries: 0,
-		// 		skipPreflight: true,
-		// 	},
-		// );
-
-		// console.log(
-		// 	"\x1b[33m%s\x1b[0m",
-		// 	`sent transaction with signature ${signature}`,
-		// );
-
-		// const signature = await sendAndConfirmRawTransaction(
-		// 	stakedConnection,
-		// 	Buffer.from(transaction.serialize()),
-		// 	{
-		// 		commitment: "confirmed",
-		// 		skipPreflight: true,
-		// 		preflightCommitment: "confirmed",
-		// 		maxRetries: 0,
-		// 	},
-		// );
-
-		// const blockhash = await connection.getLatestBlockhash();
-
-		// const confirmation = await connection.confirmTransaction(
-		// 	{
-		// 		signature,
-		// 		...blockhash,
-		// 	},
-		// 	"confirmed",
-		// );
-
-		// console.log(
-		// 	`transaction confirmed with status ${JSON.stringify(confirmation)}`,
-		// );
 
 		performance.event("sent-transaction");
-		// }
-
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} catch (error: any) {
 		console.log(error);

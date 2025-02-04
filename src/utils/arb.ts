@@ -1,41 +1,36 @@
 import {
-	ComputeBudgetProgram,
 	type Connection,
+	type TransactionInstruction,
+	type Blockhash,
+	Keypair,
+	ComputeBudgetProgram,
 	PublicKey,
 	SystemProgram,
-	type TransactionInstruction,
 	TransactionMessage,
 	VersionedTransaction,
+	Transaction,
 } from "@solana/web3.js";
-import { WSOL_MINT } from "./common";
-import {
-	type CustomJupiterQuote,
-	getJupiterSwapQuote,
-	type JupiterApiClient,
-} from "./jupiter";
+import type { Wallet } from "@coral-xyz/anchor";
 import type {
 	Instruction,
 	QuoteResponse,
 	SwapInstructionsResponse,
 } from "@jup-ag/api";
-import type { Wallet } from "@coral-xyz/anchor";
-import {
-	constructSolendFlashLoanBorrowInstruction,
-	constructSolendFlashLoanRepayInstruction,
-} from "./solend";
+import { WSOL_MINT } from "./common";
 import type {
-	SolendFlashLoanBorrowInstructionOptions,
-	SolendFlashLoanInstructionWalletData,
-	SolendFlashLoanRepayInstructionOptions,
-} from "../types/solend";
+	KaminoFlashLoanBorrowOptions,
+	KaminoFlashLoanRepayOptions,
+	KaminoFlashLoanWalletData,
+} from "../types/kamino";
 import {
 	constructKaminoFlashLoanBorrowInstruction,
 	constructKaminoFlashLoanRepayInstruction,
 } from "./kamino";
-import type {
-	ParsedInnerInstruction,
-	ParsedInstruction,
-} from "@solana/web3.js";
+import {
+	type CustomJupiterQuote,
+	type JupiterApiClient,
+	getJupiterSwapQuote,
+} from "./jupiter";
 
 const jitoTipAccountAddresses = [
 	"96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5",
@@ -121,6 +116,25 @@ const instructionFormat = (instruction: Instruction) => {
 	};
 };
 
+export const createTipWallet = async () => {
+	const tipWallet = new Keypair();
+	// const createAccountParams = {
+	// 	fromPubkey: fromWallet.publicKey,
+	// 	newAccountPubkey: tipWallet.publicKey,
+	// 	lamports: rentExemptionAmount,
+	// 	space,
+	// 	programId: SystemProgram.programId,
+	// };
+
+	// const createTipAccountInstruction =
+	// 	SystemProgram.createAccount(createAccountParams);
+
+	return {
+		// createTipAccountInstruction,
+		tipWallet,
+	};
+};
+
 export const constructArbitrageTransaction = async (
 	connection: Connection,
 	wallet: Wallet,
@@ -129,19 +143,17 @@ export const constructArbitrageTransaction = async (
 	},
 	flashLoanInstructionData: {
 		borrowInstructionData: {
-			walletData: Omit<SolendFlashLoanInstructionWalletData, "wallet">;
-			options: SolendFlashLoanBorrowInstructionOptions;
+			walletData: Omit<KaminoFlashLoanWalletData, "wallet">;
+			options: KaminoFlashLoanBorrowOptions;
 		};
 		repayInstructionData: {
-			walletData: Omit<SolendFlashLoanInstructionWalletData, "wallet">;
-			options: Omit<
-				SolendFlashLoanRepayInstructionOptions,
-				"borrowInstructionIndex"
-			>;
+			walletData: Omit<KaminoFlashLoanWalletData, "wallet">;
+			options: Omit<KaminoFlashLoanRepayOptions, "borrowInstructionIndex">;
 		};
 	},
-	jitoTip: number,
-	flashLoanType: "kamino" | "solend" | "none" = "kamino",
+	tipData: {
+		jitoTip: number;
+	},
 ) => {
 	const instructions = jupiterSwapInstructions;
 
@@ -153,78 +165,46 @@ export const constructArbitrageTransaction = async (
 	// console.log(`compute unit limit is ${instructions.computeUnitLimit} CUs`);
 	ixs.push(computeUnitLimitInstruction);
 
-	// const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-	// 	microLamports: 100_000,
-	// });
-	// ixs.push(addPriorityFee);
-
 	const setupInstructions =
 		instructions.setupInstructions.map(instructionFormat);
 	ixs = ixs.concat(setupInstructions);
 
 	const borrowInstructionIndex = ixs.length;
 
-	if (flashLoanType === "kamino") {
-		const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
-			{
-				wallet,
-				...flashLoanInstructionData.borrowInstructionData.walletData,
-			},
-			flashLoanInstructionData.borrowInstructionData.options,
-		);
-		ixs.push(borrowInstruction);
-	}
-
-	if (flashLoanType === "solend") {
-		const borrowInstruction = constructSolendFlashLoanBorrowInstruction(
-			{
-				wallet,
-				...flashLoanInstructionData.borrowInstructionData.walletData,
-			},
-			flashLoanInstructionData.borrowInstructionData.options,
-		);
-		ixs.push(borrowInstruction);
-	}
+	const borrowInstruction = constructKaminoFlashLoanBorrowInstruction(
+		{
+			wallet,
+			...flashLoanInstructionData.borrowInstructionData.walletData,
+		},
+		flashLoanInstructionData.borrowInstructionData.options,
+	);
+	ixs.push(borrowInstruction);
 
 	const swapInstructions = instructionFormat(instructions.swapInstruction);
 	ixs.push(swapInstructions);
 
-	if (flashLoanType === "kamino") {
-		const repayInstruction = constructKaminoFlashLoanRepayInstruction(
-			{
-				wallet,
-				...flashLoanInstructionData.repayInstructionData.walletData,
-			},
-			{
-				...flashLoanInstructionData.repayInstructionData.options,
-				borrowInstructionIndex,
-			},
-		);
-		ixs.push(repayInstruction);
-	}
+	const repayInstruction = constructKaminoFlashLoanRepayInstruction(
+		{
+			wallet,
+			...flashLoanInstructionData.repayInstructionData.walletData,
+		},
+		{
+			...flashLoanInstructionData.repayInstructionData.options,
+			borrowInstructionIndex,
+		},
+	);
+	ixs.push(repayInstruction);
 
-	if (flashLoanType === "solend") {
-		const repayInstruction = constructSolendFlashLoanRepayInstruction(
-			{
-				wallet,
-				...flashLoanInstructionData.repayInstructionData.walletData,
-			},
-			{
-				...flashLoanInstructionData.repayInstructionData.options,
-				borrowInstructionIndex,
-			},
-		);
-		ixs.push(repayInstruction);
-	}
+	const { tipWallet } = await createTipWallet();
+
+	console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
+
+	const minimumBalance = await connection.getMinimumBalanceForRentExemption(0);
 
 	const tipInstruction = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,
-		toPubkey: new PublicKey(
-			jitoTipAccountAddresses[
-				Math.floor(Math.random() * jitoTipAccountAddresses.length)
-			],
-		),
-		lamports: jitoTip,
+		toPubkey: tipWallet.publicKey,
+		lamports: tipData.jitoTip + minimumBalance,
 	});
 	ixs.push(tipInstruction);
 
@@ -238,7 +218,6 @@ export const constructArbitrageTransaction = async (
 	);
 
 	const { blockhash } = await connection.getLatestBlockhash();
-	console.log(`blockhash: ${blockhash}`);
 	const messageV0 = new TransactionMessage({
 		payerKey: wallet.payer.publicKey,
 		recentBlockhash: blockhash,
@@ -250,106 +229,40 @@ export const constructArbitrageTransaction = async (
 	const transaction = new VersionedTransaction(messageV0);
 	transaction.sign([wallet.payer]);
 
-	// https://solana.com/developers/cookbook/transactions/optimize-compute
+	return {
+		arbTransaction: transaction,
+		blockhash,
+		tipWallet,
+	};
+};
+
+export const constructTipTransaction = (
+	options: {
+		amount: number;
+		wallet: Keypair;
+	},
+	blockhash: Blockhash,
+) => {
+	const transaction = new Transaction();
+
+	const jitoTipWallet = new PublicKey(
+		jitoTipAccountAddresses[
+			Math.floor(Math.random() * jitoTipAccountAddresses.length)
+		],
+	);
+
+	console.log(`sending tip to ${jitoTipWallet.toBase58()}`);
+
+	const tipInstruction = SystemProgram.transfer({
+		fromPubkey: options.wallet.publicKey,
+		toPubkey: jitoTipWallet,
+		lamports: options.amount,
+	});
+
+	transaction.add(tipInstruction);
+
+	transaction.recentBlockhash = blockhash;
+	transaction.sign(options.wallet);
 
 	return transaction;
 };
-
-// const simulateTransaction = async (transaction) => {
-//     const simulateResponse = await connection.simulateTransaction(transaction, {
-// 		commitment: "confirmed",
-// 		replaceRecentBlockhash: true,
-// 		innerInstructions: true,
-// 	});
-
-// 	if (blockhash !== simulateResponse.value.replacementBlockhash.blockhash) {
-// 		throw new Error(
-// 			`blockhash mismatch. original blockhash: ${blockhash}, replacement blockhash: ${simulateResponse.value.replacementBlockhash.blockhash}`,
-// 		);
-// 	}
-
-// 	const simulatedSwapInstruction = (
-// 		simulateResponse.value as typeof simulateResponse.value & {
-// 			innerInstructions: ParsedInnerInstruction[];
-// 		}
-// 	).innerInstructions.find((ix) => ix.index === swapInstructionIndex);
-
-// 	if (!simulatedSwapInstruction) {
-// 		throw new Error("no simulated swap instruction found");
-// 	}
-
-// 	const simulatedSwapInstructionInnerInstructions =
-// 		simulatedSwapInstruction?.instructions;
-
-// 	const transferInstructions = simulatedSwapInstructionInnerInstructions.filter(
-// 		(ix) =>
-// 			ix.programId.toBase58() === "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-// 	) as ParsedInstruction[];
-
-// 	transferInstructions.forEach(console.log);
-
-// 	const instructionsWithWsolSource = transferInstructions.filter(
-// 		(ix) =>
-// 			ix.parsed.info.source === "9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
-// 	);
-// 	const instructionsWithWsolDestination = transferInstructions.filter(
-// 		(ix) =>
-// 			ix.parsed.info.destination ===
-// 			"9aiAdnqJVmw5jHBjEHv6P6cCadTFK6iwwSFKQcDq7W9q",
-// 	);
-
-// 	if (
-// 		instructionsWithWsolSource.length !== 1 ||
-// 		instructionsWithWsolDestination.length !== 1
-// 	) {
-// 		throw new Error(
-// 			`no wsol transfer instructions found. found ${instructionsWithWsolSource.length} ixs with wsol source. found ${instructionsWithWsolDestination.length} ixs with wsol destination.`,
-// 		);
-// 	}
-
-// 	const startTransferInstruction = instructionsWithWsolSource[0];
-// 	const endTransferInstruction = instructionsWithWsolDestination[0];
-
-// 	if (!startTransferInstruction) {
-// 		throw new Error("no start transfer instruction found");
-// 	}
-
-// 	if (!endTransferInstruction) {
-// 		throw new Error("no end transfer instruction found");
-// 	}
-
-// 	const simulatedInputAmount =
-// 		"tokenAmount" in startTransferInstruction.parsed.info
-// 			? startTransferInstruction.parsed.info.tokenAmount.amount
-// 			: startTransferInstruction.parsed.info.amount;
-// 	const simulatedOutputAmount =
-// 		"tokenAmount" in endTransferInstruction.parsed.info
-// 			? endTransferInstruction.parsed.info.tokenAmount.amount
-// 			: endTransferInstruction.parsed.info.amount;
-
-// 	if (!simulatedInputAmount) {
-// 		console.log(startTransferInstruction);
-
-// 		throw new Error("no simulated input amount found");
-// 	}
-
-// 	if (!simulatedOutputAmount) {
-// 		console.log(endTransferInstruction);
-
-// 		throw new Error("no simulated output amount found");
-// 	}
-
-// 	console.log(
-// 		`simulated flow: ${simulatedInputAmount} -> ${simulatedOutputAmount}`,
-// 	);
-
-// 	console.log(Number.parseInt(simulatedOutputAmount));
-// 	console.log(Number.parseInt(simulatedInputAmount));
-
-// 	if (
-// 		Number.parseInt(simulatedOutputAmount) <
-// 		Number.parseInt(simulatedInputAmount)
-// 	) {
-// 		throw new Error("losing trade");
-// 	}
-// };
