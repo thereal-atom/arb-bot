@@ -80,19 +80,19 @@ const runArb = async () => {
 		);
 
 		// const jitoTip = Math.min(Math.floor(profitLamports / 2), 3_000_000);
-		// const jitoTip = Math.floor(profitLamports * 0.75);
-		// console.log(`jito tip is ${jitoTip.toLocaleString()} lamports`);
+		const jitoTip = Math.floor(profitLamports * 0.4);
+		console.log(`jito tip is ${jitoTip.toLocaleString()} lamports`);
 
 		// log.calculatedJitoTip = jitoTip;
 
 		// const threshold = config.arbConfig.thresholdLamports;
-		// const threshold = 0.0005 * inAmountLamports;
-		// console.log(`threshold is ${threshold.toLocaleString()} lamports`);
-		// if (profitLamports < threshold) {
-		// 	// saveLog(log);
+		const threshold = 0.0001 * inAmountLamports;
+		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
+		if (profitLamports < threshold) {
+			// saveLog(log);
 
-		// 	return;
-		// }
+			return;
+		}
 
 		// console.log(
 		// 	"\x1b[35m%s\x1b[0m",
@@ -144,7 +144,7 @@ const runArb = async () => {
 					},
 				},
 			},
-			0,
+			jitoTip,
 			"kamino",
 		);
 
@@ -170,26 +170,26 @@ const runArb = async () => {
 		// const sendType: "bundle" | "transaction" = "transaction";
 
 		// if (sendType === "bundle") {
-		// const bundleData = await sendJitoBundle([transaction]);
+		const bundleData = await sendJitoBundle([transaction]);
 
-		// performance.event("sent-bundle");
+		performance.event("sent-bundle");
 
-		// console.log("\x1b[33m%s\x1b[0m", bundleData.result);
+		console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 		// } else {
 
-		console.log("sending tx");
-		const signature = await connection.sendRawTransaction(
-			transaction.serialize(),
-			{
-				maxRetries: 0,
-				skipPreflight: true,
-			},
-		);
+		// console.log("sending tx");
+		// const signature = await connection.sendRawTransaction(
+		// 	transaction.serialize(),
+		// 	{
+		// 		maxRetries: 0,
+		// 		skipPreflight: true,
+		// 	},
+		// );
 
-		console.log(
-			"\x1b[33m%s\x1b[0m",
-			`sent transaction with signature ${signature}`,
-		);
+		// console.log(
+		// 	"\x1b[33m%s\x1b[0m",
+		// 	`sent transaction with signature ${signature}`,
+		// );
 
 		// const signature = await sendAndConfirmRawTransaction(
 		// 	stakedConnection,

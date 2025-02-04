@@ -57,11 +57,11 @@ export const sendJitoTransaction = async (
 export const sendJitoBundle = async (
 	transactions: VersionedTransaction[],
 ): Promise<JitoResponse<"string">> => {
-	const response = await Promise.all([
-		sendJitoRequest("/api/v1/bundles", "sendBundle", [
-			transactions.map((tx) => bs58.encode(tx.serialize())),
-			"ny",
-		]),
+	const jitoBundleResponses = await Promise.all([
+		// sendJitoRequest("/api/v1/bundles", "sendBundle", [
+		// 	transactions.map((tx) => bs58.encode(tx.serialize())),
+		// 	"ny",
+		// ]),
 		...[
 			"https://amsterdam.mainnet.block-engine.jito.wtf",
 			"https://frankfurt.mainnet.block-engine.jito.wtf",
@@ -80,18 +80,19 @@ export const sendJitoBundle = async (
 					method: "sendBundle",
 					params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
 				}),
+				proxy: "http://mtfqwhxi-rotate:9bbfkcd03q6q@p.webshare.io:80",
 			}),
 		),
 	]);
 
-	const jitoBundleResponse = response[0];
+	// const jitoBundleResponse = response[0];
 
-	const otherJitoBundleResponses = response.slice(1);
+	// const otherJitoBundleResponses = response.slice(1);
 
-	const otherJitoBundleData = await Promise.all(
-		otherJitoBundleResponses.map((res) => res.json()),
+	const jitoBundleData = await Promise.all(
+		jitoBundleResponses.map((res) => res.json()),
 	);
-	console.log(otherJitoBundleData);
+	console.log(jitoBundleData);
 
 	// const jitoBundleResponse = await sendJitoRequest(
 	// 	"/api/v1/bundles",
@@ -99,7 +100,7 @@ export const sendJitoBundle = async (
 	// 	[transactions.map((tx) => bs58.encode(tx.serialize())), "ny"],
 	// );
 
-	return jitoBundleResponse;
+	return jitoBundleData[0];
 };
 
 export const checkJitoBundleStatus = async (
