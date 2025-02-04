@@ -215,17 +215,23 @@ export const constructArbitrageTransaction = async (
 
 	console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
 
+	console.log(`tip is ${tipData.jitoTip}`);
+
 	const minimumAmount = await connection.getMinimumBalanceForRentExemption(0);
+
+	console.log(`minimumAmount is ${minimumAmount}`);
 
 	const sendAmount =
 		tipData.jitoTip > minimumAmount
 			? tipData.jitoTip
 			: minimumAmount + tipData.jitoTip;
 
+	console.log(`sendAmount is ${sendAmount}`);
+
 	const sendTipToTippingWalletIx = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,
 		toPubkey: tipWallet.publicKey,
-		lamports: sendAmount,
+		lamports: sendAmount + 10_000,
 	});
 	ixs.push(sendTipToTippingWalletIx);
 
