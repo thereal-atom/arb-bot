@@ -85,7 +85,7 @@ export const combineQuotes = (
 			2,
 	);
 
-	const outAmount = String(Number.parseInt(reverseQuote.inAmount) + jitoTip);
+	const outAmount = String(Number.parseInt(quote.inAmount) + jitoTip);
 
 	combinedQuote.outAmount = outAmount;
 	combinedQuote.otherAmountThreshold = outAmount;
