@@ -31,6 +31,7 @@ export const getJupiterSwapQuote = async (
 		slippageBps: 0,
 		excludeDexes: ["Obric V2"],
 		maxAccounts: 20,
+		restrictIntermediateTokens: true,
 	});
 
 	const rawQuote = res;
