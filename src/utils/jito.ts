@@ -58,7 +58,8 @@ export const sendJitoBundle = async (
 	transactions: (VersionedTransaction | Transaction)[],
 ): Promise<JitoResponse<"string">> => {
 	const res = await fetch(
-		"https://ny.mainnet.block-engine.jito.wtf/api/v1/bundles",
+		// "https://ny.mainnet.block-engine.jito.wtf/api/v1/bundles",
+		config.jito.url,
 		{
 			method: "POST",
 			headers: {
@@ -70,7 +71,7 @@ export const sendJitoBundle = async (
 				method: "sendBundle",
 				params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
 			}),
-			proxy: "http://mtfqwhxi-rotate:9bbfkcd03q6q@p.webshare.io:80",
+			// proxy: "http://mtfqwhxi-rotate:9bbfkcd03q6q@p.webshare.io:80",
 		},
 	);
 
