@@ -151,25 +151,28 @@ const runArb = async () => {
 				},
 			);
 
-		const simRes = await connection.simulateTransaction(arbTransaction);
-		console.log(simRes.value.err);
+		// const simRes = await connection.simulateTransaction(arbTransaction);
+		// console.log(simRes.value);
 
 		performance.event("constructed-transaction");
 
-		const tipTransaction = constructTipTransaction(
-			{
-				amount: Math.abs(jitoTip),
-				wallet: tipWallet,
-			},
-			blockhash,
-		);
+		// const tipTransaction = constructTipTransaction(
+		// 	{
+		// 		amount: Math.abs(jitoTip),
+		// 		wallet: tipWallet,
+		// 	},
+		// 	blockhash,
+		// );
 
 		// const simulateRes = await connection.simulateTransaction(tipTransaction);
 		// console.log(simulateRes);
 
 		performance.event("constructed-tip-transaction");
 
-		const bundleData = await sendJitoBundle([arbTransaction, tipTransaction]);
+		const bundleData = await sendJitoBundle([
+			arbTransaction,
+			// tipTransaction,
+		]);
 
 		performance.event("sent-bundle");
 

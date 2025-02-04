@@ -120,24 +120,25 @@ export const createTipWallet = async (
 	connection: Connection,
 	fromWallet: Keypair,
 ) => {
-	const space = 0;
-	const rentExemptionAmount =
-		await connection.getMinimumBalanceForRentExemption(space);
-
 	const tipWallet = new Keypair();
-	const createAccountParams = {
-		fromPubkey: fromWallet.publicKey,
-		newAccountPubkey: tipWallet.publicKey,
-		lamports: rentExemptionAmount,
-		space,
-		programId: SystemProgram.programId,
-	};
 
-	const createTipAccountInstruction =
-		SystemProgram.createAccount(createAccountParams);
+	// const space = 0;
+	// const rentExemptionAmount =
+	// 	await connection.getMinimumBalanceForRentExemption(space);
+
+	// const createAccountParams = {
+	// 	fromPubkey: fromWallet.publicKey,
+	// 	newAccountPubkey: tipWallet.publicKey,
+	// 	lamports: rentExemptionAmount,
+	// 	space,
+	// 	programId: SystemProgram.programId,
+	// };
+
+	// const createTipAccountInstruction =
+	// 	SystemProgram.createAccount(createAccountParams);
 
 	return {
-		createTipAccountInstruction,
+		// createTipAccountInstruction,
 		tipWallet,
 	};
 };
@@ -202,19 +203,30 @@ export const constructArbitrageTransaction = async (
 	);
 	ixs.push(repayInstruction);
 
-	const { createTipAccountInstruction, tipWallet } = await createTipWallet(
-		connection,
-		wallet.payer,
-	);
-	ixs.push(createTipAccountInstruction);
+	const {
+		// createTipAccountInstruction,
+		tipWallet,
+	} = await createTipWallet(connection, wallet.payer);
+	// ixs.push(createTipAccountInstruction);
 
-	console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
+	// console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
 
 	// const minimumBalance = await connection.getMinimumBalanceForRentExemption(0);
 
+	// const tipInstruction = SystemProgram.transfer({
+	// 	fromPubkey: wallet.payer.publicKey,
+	// 	toPubkey: tipWallet.publicKey,
+	// 	lamports: tipData.jitoTip,
+	// });
+	// ixs.push(tipInstruction);
+
 	const tipInstruction = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,
-		toPubkey: tipWallet.publicKey,
+		toPubkey: new PublicKey(
+			jitoTipAccountAddresses[
+				Math.floor(Math.random() * jitoTipAccountAddresses.length)
+			],
+		),
 		lamports: tipData.jitoTip,
 	});
 	ixs.push(tipInstruction);
