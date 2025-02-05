@@ -34,7 +34,7 @@ const mints = [
 	"399DmbmPgM8wPLQGDWs47W525RJRPn5K714nU6N5pump", // WIFOUT
 	"H4phNbsqjV5rqk8u6FUACTLB6rNZRTAPGnBb8KXJpump", // SSE
 	"FFs1bhpJHj4ANFdSUqhsMXgfjRNw8ZiwdxEALGFvF7r8", // APE
-	"8Q1X41xnj98LYNqwE1CSbC3NUcdhn4wRopH2WtKXSbyN", // STRAYAI
+	// "8Q1X41xnj98LYNqwE1CSbC3NUcdhn4wRopH2WtKXSbyN", // STRAYAI
 ];
 
 const runArb = async () => {
