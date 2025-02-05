@@ -26,7 +26,10 @@ export const trackPerformance = (initialEventName: string) => {
 			console.log(
 				`[${new Date().toLocaleTimeString()}] ${eventName}: ${Date.now() - startTimestamp}ms since start.`,
 			);
+
+			return Date.now();
 		},
+		startTimestamp,
 	};
 };
 

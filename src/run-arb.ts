@@ -12,7 +12,7 @@ import { getRandomNumber, trackPerformance, WSOL_MINT } from "./utils/common";
 import { setup } from "./utils/setup";
 // import { type Log, saveLog, createLog } from "./utils/logs";
 
-const { connection, jupiter, wallet, config } = setup();
+const { connection, jupiter, wallet, config, logtail } = setup();
 
 const mints = [
 	"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
@@ -40,8 +40,12 @@ const mints = [
 const runArb = async () => {
 	// const log = createLog();
 
+	const ctx: Record<string, any> = {};
+
 	try {
 		const performance = trackPerformance("checking-for-profit");
+
+		ctx.startTimestamp = performance.startTimestamp;
 
 		const inAmountLamports =
 			config.arbConfig.amount.mode === "fixed"
@@ -55,64 +59,48 @@ const runArb = async () => {
 
 		const uiAmountSol = inAmountLamports / 10 ** 9;
 
-		// log.inAmountLamports = inAmount;
+		const mint = mints[Math.floor(Math.random() * mints.length)];
 
 		const { quote, reverseQuote } = await getArbitrageQuotes(jupiter, {
-			mintB: mints[Math.floor(Math.random() * mints.length)],
+			mintB: mint,
 			uiAmountSol,
 		});
 
-		// console.log(quote);
-		// console.log(reverseQuote);
-
-		// log.quotes = {
-		// 	quote: {
-		// 		fetchedAt: Date.now(),
-		// 		quote: quote,
-		// 	},
-		// 	reverseQuote: {
-		// 		fetchedAt: Date.now(),
-		// 		quote: reverseQuote,
-		// 	},
-		// };
-
-		performance.event("got-quote");
+		const gotQuoteTimestamp = performance.event("got-quote");
 
 		const { profitLamports, profitPercent } = getQuoteProfit(
 			quote,
 			reverseQuote,
 		);
 
-		// log.calculatedProfitLamports = profitLamports;
+		ctx.quoteData = {
+			gotQuoteTimestamp,
+			quote: quote.rawQuote,
+			reverseQuote: reverseQuote.rawQuote,
+		};
 
-		console.log(
-			`${quote.inAmount} → ${reverseQuote.outAmount} SOL (${profitLamports.toFixed(5)} lamports, ${profitPercent}%)`,
-		);
-
-		// const jitoTip = Math.min(Math.floor(profitLamports / 2), 3_000_000);
 		const jitoTip = Math.floor(profitLamports * 0.9);
-		// const jitoTip = 20_000;
-		console.log(`jito tip is ${jitoTip.toLocaleString()} lamports`);
 
-		// log.calculatedJitoTip = jitoTip;
-
-		// const threshold = 0.00002 * inAmountLamports;
 		const threshold = 100_000;
-		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
+
+		ctx.main = {
+			arbConfig: config.arbConfig,
+			inAmountLamports,
+			mint,
+			mintList: mints,
+			calculatedProfit: profitLamports,
+			calculatedProfitPercent: profitPercent,
+			threshold,
+			jitoTip,
+		};
+
 		if (profitLamports < threshold) {
-			// saveLog(log);
+			logtail.warn("unprofitable tx. not continuing", { ctx });
 
 			return;
 		}
 
-		// console.log(
-		// 	"\x1b[35m%s\x1b[0m",
-		// 	`profitable opportunity found: ${profitLamports.toFixed(5)} SOL (${profitPercent}%)`,
-		// );
-
 		const combinedQuote = combineQuotes(quote.rawQuote, reverseQuote.rawQuote);
-
-		// console.log(combinedQuote);
 
 		const instructions = await getJupiterSwapTransactionInstructions(
 			jupiter,
@@ -120,14 +108,13 @@ const runArb = async () => {
 			combinedQuote,
 		);
 
-		// log.jupiterSwapTransactionInstructions = {
-		// 	fetchedAt: Date.now(),
-		// 	instructions: instructions,
-		// };
+		const gotIxsTimestamp = performance.event("got-instructions");
 
-		performance.event("got-instructions");
+		ctx.gotIxsTimestamp = gotIxsTimestamp;
 
 		const wsolTokenAccountAddress = config.wallet.wsolTokenAccountAddress;
+
+		ctx.main.wsolTokenAccountAddress = wsolTokenAccountAddress;
 
 		const { arbTransaction, blockhash, tipWallet, minimumAmount } =
 			await constructArbitrageTransaction(
@@ -162,7 +149,9 @@ const runArb = async () => {
 		// const simRes = await connection.simulateTransaction(arbTransaction);
 		// console.log(simRes.value);
 
-		performance.event("constructed-transaction");
+		const constructedTxTimestamp = performance.event("constructed-transaction");
+
+		ctx.constructedTxTimestamp = constructedTxTimestamp;
 
 		const tipTransaction = constructTipTransaction(
 			{
@@ -177,19 +166,39 @@ const runArb = async () => {
 		// const simulateRes = await connection.simulateTransaction(tipTransaction);
 		// console.log(simulateRes);
 
-		performance.event("constructed-tip-transaction");
+		ctx.constructedTipTxTimestamp = performance.event(
+			"constructed-tip-transaction",
+		);
+		ctx.tipWalletPublicKey = tipWallet.publicKey.toBase58();
+		ctx.minimumAmount = minimumAmount;
 
-		const bundleData = await sendJitoBundle([arbTransaction, tipTransaction]);
+		const { data: bundleData, proxyUrl: jitoProxyUrl } = await sendJitoBundle([
+			arbTransaction,
+			tipTransaction,
+		]);
 
-		performance.event("sent-bundle");
+		ctx.sentBundleTimestamp = performance.event("sent-bundle");
+		ctx.bundleData = bundleData;
+		ctx.jitoProxyUrl = jitoProxyUrl;
 
 		console.log("\x1b[33m%s\x1b[0m", bundleData.result);
 
-		performance.event("sent-transaction");
+		ctx.sendTransactionTimestamp = performance.event("sent-transaction");
+
+		logtail.info("sent transaction", { ctx });
+
+		await logtail.flush();
+
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} catch (error: any) {
 		console.log(error);
 		console.log("\x1b[31m%s\x1b[0m", "failed.");
+
+		ctx.errorLogs = [...ctx.errorLogs, error.message];
+
+		logtail.error("error sending transaction", { ctx });
+
+		await logtail.flush();
 
 		// log.errorLogs = [...log.errorLogs, error.message];
 		// saveLog(log);

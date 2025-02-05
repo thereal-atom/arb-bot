@@ -173,7 +173,6 @@ export const constructArbitrageTransaction = async (
 	const computeUnitLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
 		units: 500_000,
 	});
-	// console.log(`compute unit limit is ${instructions.computeUnitLimit} CUs`);
 	ixs.push(computeUnitLimitInstruction);
 
 	const setupInstructions =
@@ -214,20 +213,12 @@ export const constructArbitrageTransaction = async (
 	} = await createTipWallet(connection, wallet.payer);
 	// ixs.push(createTipAccountInstruction);
 
-	console.log(`tipping from ${tipWallet.publicKey.toBase58()}`);
-
-	console.log(`tip is ${tipData.jitoTip}`);
-
 	const minimumAmount = await connection.getMinimumBalanceForRentExemption(0);
-
-	console.log(`minimumAmount is ${minimumAmount}`);
 
 	const sendAmount =
 		tipData.jitoTip > minimumAmount
 			? tipData.jitoTip
 			: minimumAmount + tipData.jitoTip;
-
-	console.log(`sendAmount is ${sendAmount}`);
 
 	const sendTipToTippingWalletIx = SystemProgram.transfer({
 		fromPubkey: wallet.payer.publicKey,
@@ -299,8 +290,6 @@ export const constructTipTransaction = (
 			Math.floor(Math.random() * jitoTipAccountAddresses.length)
 		],
 	);
-
-	console.log(`sending tip to ${jitoTipWallet.toBase58()}`);
 
 	const tipInstruction = SystemProgram.transfer({
 		fromPubkey: options.wallet.publicKey,

@@ -21,6 +21,9 @@ const envSchema = z.object({
 	ARB_CONFIG_AMOUNT_MINIMUM: zodNumeric,
 	ARB_CONFIG_AMOUNT_MAXIMUM: zodNumeric,
 	ARB_CONFIG_AMOUNT_FIXED: zodNumeric,
+
+	LOGTAIL_SOURCE_TOKEN: z.string(),
+	LOGTAIL_SOURCE_INGESTION_URL: z.string(),
 });
 
 const env = envSchema.parse(process.env);
@@ -47,6 +50,12 @@ export const config = {
 			minimum: env.ARB_CONFIG_AMOUNT_MINIMUM,
 			maximum: env.ARB_CONFIG_AMOUNT_MAXIMUM,
 			fixed: env.ARB_CONFIG_AMOUNT_FIXED,
+		},
+	},
+	logtail: {
+		source: {
+			token: env.LOGTAIL_SOURCE_TOKEN,
+			ingestionUrl: env.LOGTAIL_SOURCE_INGESTION_URL,
 		},
 	},
 };

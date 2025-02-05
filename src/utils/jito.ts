@@ -90,7 +90,11 @@ const proxyUrls = [
 
 export const sendJitoBundle = async (
 	transactions: (VersionedTransaction | Transaction)[],
-): Promise<JitoResponse<"string">> => {
+): Promise<{
+	data: JitoResponse<"string">;
+	proxyUrl: string;
+}> => {
+	const proxyUrl = proxyUrls[Math.floor(Math.random() * proxyUrls.length)];
 	const res = await fetch(
 		"https://ny.mainnet.block-engine.jito.wtf/api/v1/bundles",
 		// config.jito.url,
@@ -105,7 +109,7 @@ export const sendJitoBundle = async (
 				method: "sendBundle",
 				params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
 			}),
-			proxy: proxyUrls[Math.floor(Math.random() * proxyUrls.length)],
+			proxy: proxyUrl,
 		},
 	);
 
@@ -123,7 +127,10 @@ export const sendJitoBundle = async (
 
 	const data = await res.json();
 
-	return data;
+	return {
+		data,
+		proxyUrl,
+	};
 };
 
 export const checkJitoBundleStatus = async (
