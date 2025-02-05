@@ -96,8 +96,8 @@ const runArb = async () => {
 
 		// log.calculatedJitoTip = jitoTip;
 
-		const threshold = 0.00002 * inAmountLamports;
-		// const threshold = 30_000;
+		// const threshold = 0.00002 * inAmountLamports;
+		const threshold = 100_000;
 		console.log(`threshold is ${threshold.toLocaleString()} lamports`);
 		if (profitLamports < threshold) {
 			// saveLog(log);
