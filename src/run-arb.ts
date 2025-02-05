@@ -15,20 +15,22 @@ import { setup } from "./utils/setup";
 const { connection, jupiter, wallet, config } = setup();
 
 const mints = [
-	"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
-	"Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
-	"2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
-	"USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA", // USDS
-	"J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
-	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
-	"4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", // RAY
-	"BYZ9CcZGKAXmN2uDsKcQMM9UnZacija4vWcns9Th69xb", // botify
-	"BrZmDQwbdLXme3uaea8znLhy9Bb3fucMJmcFBuRPpump", // cloudy
-	"2z1p8xCEjRzpBHjXWrx4tJnz7BFL6z7NnvbCxH7bpump", // san
-	"CBdCxKo9QavR9hfShgpEBG3zekorAeD7W1jfq2o3pump", // luce
-	"FLJYGHpCCcfYUdzhcfHSeSd2peb5SMajNWaCsRnhpump", // STORE
-	"DBpVGmVbMrw2vEbkhBu2cC3MvEg63opeRHdakVMEpump", // CHARM
-	"Hjw6bEcHtbHGpQr8onG3izfJY5DJiWdt7uk2BfdSpump", // SNAI
+	// "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
+	// "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
+	// "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
+	// "USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA", // USDS
+	// "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
+	// "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
+	// "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", // RAY
+	// "BYZ9CcZGKAXmN2uDsKcQMM9UnZacija4vWcns9Th69xb", // botify
+	// "BrZmDQwbdLXme3uaea8znLhy9Bb3fucMJmcFBuRPpump", // cloudy
+	// "2z1p8xCEjRzpBHjXWrx4tJnz7BFL6z7NnvbCxH7bpump", // san
+	// "CBdCxKo9QavR9hfShgpEBG3zekorAeD7W1jfq2o3pump", // luce
+	// "FLJYGHpCCcfYUdzhcfHSeSd2peb5SMajNWaCsRnhpump", // STORE
+	// "DBpVGmVbMrw2vEbkhBu2cC3MvEg63opeRHdakVMEpump", // CHARM
+	// "Hjw6bEcHtbHGpQr8onG3izfJY5DJiWdt7uk2BfdSpump", // SNAI
+	"6sSKobm4TSRqJuXMuczGdV2BZityP76PGBJJ2ALHpump", // Calicoin
+	"HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
 ];
 
 const runArb = async () => {
