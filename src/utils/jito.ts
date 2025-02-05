@@ -86,7 +86,7 @@ const proxyUrls = [
 	"http://ss385755:bkz2UYAupV@154.3.209.45:8460",
 ];
 
-let i = 0;
+// let i = 0;
 
 export const sendJitoBundle = async (
 	transactions: (VersionedTransaction | Transaction)[],
@@ -105,15 +105,15 @@ export const sendJitoBundle = async (
 				method: "sendBundle",
 				params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
 			}),
-			proxy: proxyUrls[i],
+			proxy: proxyUrls[Math.floor(Math.random() * proxyUrls.length)],
 		},
 	);
 
-	if (i >= proxyUrls.length - 1) {
-		i = 0;
-	} else {
-		i++;
-	}
+	// if (i >= proxyUrls.length - 1) {
+	// 	i = 0;
+	// } else {
+	// 	i++;
+	// }
 
 	if (!res.ok) {
 		console.log(res);
