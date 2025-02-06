@@ -19,8 +19,8 @@ const mints = [
 	"Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", // USDT
 	// "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo", // PYUSD
 	// "USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA", // USDS
-	// "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
-	// "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
+	"J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", // JitoSOL
+	"27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4", // JLP
 	// "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", // RAY
 	// "BYZ9CcZGKAXmN2uDsKcQMM9UnZacija4vWcns9Th69xb", // botify
 	// "BrZmDQwbdLXme3uaea8znLhy9Bb3fucMJmcFBuRPpump", // cloudy
@@ -31,9 +31,9 @@ const mints = [
 	// "Hjw6bEcHtbHGpQr8onG3izfJY5DJiWdt7uk2BfdSpump", // SNAI
 	// "6sSKobm4TSRqJuXMuczGdV2BZityP76PGBJJ2ALHpump", // Calicoin
 	// "HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
-	"399DmbmPgM8wPLQGDWs47W525RJRPn5K714nU6N5pump", // WIFOUT
+	// "2eXamy7t3kvKhfV6aJ6Uwe3eh8cuREFcTKs1mFKZpump", // nuit
 	"H4phNbsqjV5rqk8u6FUACTLB6rNZRTAPGnBb8KXJpump", // SSE
-	"FFs1bhpJHj4ANFdSUqhsMXgfjRNw8ZiwdxEALGFvF7r8", // APE
+	// "FFs1bhpJHj4ANFdSUqhsMXgfjRNw8ZiwdxEALGFvF7r8", // APE
 	// "8Q1X41xnj98LYNqwE1CSbC3NUcdhn4wRopH2WtKXSbyN", // STRAYAI
 ];
 
