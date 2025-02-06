@@ -95,7 +95,7 @@ const runArb = async () => {
 		};
 
 		if (profitLamports < threshold) {
-			logtail.warn("unprofitable tx. not continuing", { ctx });
+			logtail.warn("unprofitable tx. not continuing", ctx);
 
 			return;
 		}
@@ -185,9 +185,7 @@ const runArb = async () => {
 
 		ctx.sendTransactionTimestamp = performance.event("sent-transaction");
 
-		logtail.info("sent transaction", { ctx });
-
-		await logtail.flush();
+		await logtail.success("sent transaction", ctx);
 
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} catch (error: any) {
@@ -196,9 +194,7 @@ const runArb = async () => {
 
 		ctx.errorLogs = [...ctx.errorLogs, error.message];
 
-		logtail.error("error sending transaction", { ctx });
-
-		await logtail.flush();
+		await logtail.error("error sending transaction", ctx);
 
 		// log.errorLogs = [...log.errorLogs, error.message];
 		// saveLog(log);

@@ -22,8 +22,8 @@ const envSchema = z.object({
 	ARB_CONFIG_AMOUNT_MAXIMUM: zodNumeric,
 	ARB_CONFIG_AMOUNT_FIXED: zodNumeric,
 
-	LOGTAIL_SOURCE_TOKEN: z.string(),
-	LOGTAIL_SOURCE_INGESTION_URL: z.string(),
+	SUPABASE_URL: z.string().url(),
+	SUPABASE_SECRET_KEY: z.string(),
 });
 
 const env = envSchema.parse(process.env);
@@ -52,10 +52,8 @@ export const config = {
 			fixed: env.ARB_CONFIG_AMOUNT_FIXED,
 		},
 	},
-	logtail: {
-		source: {
-			token: env.LOGTAIL_SOURCE_TOKEN,
-			ingestionUrl: env.LOGTAIL_SOURCE_INGESTION_URL,
-		},
+	supabase: {
+		url: env.SUPABASE_URL,
+		secretKey: env.SUPABASE_SECRET_KEY,
 	},
 };
