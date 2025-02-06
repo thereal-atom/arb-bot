@@ -40,7 +40,7 @@ const mints = [
 const runArb = async () => {
 	// const log = createLog();
 
-	const ctx: Record<string, any> = {};
+	const ctx: Record<string, any> = { errorLogs: [] };
 
 	try {
 		const performance = trackPerformance("checking-for-profit");

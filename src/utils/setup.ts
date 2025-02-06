@@ -29,11 +29,15 @@ export const setup = () => {
 	);
 
 	const saveLog = async (level: LogLevel, message: string, ctx: LogCtx) => {
-		await supabase.from("log").insert({
-			level,
-			message,
-			ctx,
-		});
+		if (false) {
+			await supabase.from("log").insert({
+				level,
+				message,
+				ctx,
+			});
+		} else {
+			console.log(`[${level}] dev - ${message}`);
+		}
 	};
 
 	const logtail = {
