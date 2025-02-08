@@ -32,7 +32,7 @@ const mints = [
 	// "6sSKobm4TSRqJuXMuczGdV2BZityP76PGBJJ2ALHpump", // Calicoin
 	// "HWeZgfKdPWRkLBGnmze5YokeZg9tQ2MYceYUChDNpump", // BFC
 	// "2eXamy7t3kvKhfV6aJ6Uwe3eh8cuREFcTKs1mFKZpump", // nuit
-	"H4phNbsqjV5rqk8u6FUACTLB6rNZRTAPGnBb8KXJpump", // SSE
+	// "H4phNbsqjV5rqk8u6FUACTLB6rNZRTAPGnBb8KXJpump", // SSE
 	// "FFs1bhpJHj4ANFdSUqhsMXgfjRNw8ZiwdxEALGFvF7r8", // APE
 	// "8Q1X41xnj98LYNqwE1CSbC3NUcdhn4wRopH2WtKXSbyN", // STRAYAI
 ];
