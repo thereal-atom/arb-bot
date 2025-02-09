@@ -109,7 +109,7 @@ export const sendJitoBundle = async (
 				method: "sendBundle",
 				params: [transactions.map((tx) => bs58.encode(tx.serialize()))],
 			}),
-			proxy: proxyUrl,
+			// proxy: proxyUrl,
 		},
 	);
 
