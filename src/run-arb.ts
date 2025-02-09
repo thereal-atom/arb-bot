@@ -81,7 +81,7 @@ const runArb = async () => {
 
 		const jitoTip = Math.floor(profitLamports * 0.9);
 
-		const threshold = 100_000;
+		const threshold = 500_000;
 
 		ctx.main = {
 			arbConfig: config.arbConfig,
@@ -144,6 +144,7 @@ const runArb = async () => {
 				{
 					jitoTip: Math.abs(jitoTip),
 				},
+				config.arbConfig.sendMode,
 			);
 
 		// const simRes = await connection.simulateTransaction(arbTransaction);
@@ -153,37 +154,74 @@ const runArb = async () => {
 
 		ctx.constructedTxTimestamp = constructedTxTimestamp;
 
-		const tipTransaction = constructTipTransaction(
-			{
-				amount: Math.abs(jitoTip),
-				wallet: tipWallet,
-				minimumAmount,
-			},
-			blockhash,
-			wallet,
-		);
+		if (config.arbConfig.sendMode === "jito") {
+			if (!tipWallet || !minimumAmount) {
+				throw new Error(
+					"send mode was jito, but tip wallet or minimum amount was not returned.",
+				);
+			}
 
-		// const simulateRes = await connection.simulateTransaction(tipTransaction);
-		// console.log(simulateRes);
+			const tipTransaction = constructTipTransaction(
+				{
+					amount: Math.abs(jitoTip),
+					wallet: tipWallet,
+					minimumAmount,
+				},
+				blockhash,
+				wallet,
+			);
 
-		ctx.constructedTipTxTimestamp = performance.event(
-			"constructed-tip-transaction",
-		);
-		ctx.tipWalletPublicKey = tipWallet.publicKey.toBase58();
-		ctx.minimumAmount = minimumAmount;
+			// const simulateRes = await connection.simulateTransaction(tipTransaction);
+			// console.log(simulateRes);
 
-		const { data: bundleData, proxyUrl: jitoProxyUrl } = await sendJitoBundle([
-			arbTransaction,
-			tipTransaction,
-		]);
+			ctx.constructedTipTxTimestamp = performance.event(
+				"constructed-tip-transaction",
+			);
+			ctx.tipWalletPublicKey = tipWallet.publicKey.toBase58();
+			ctx.minimumAmount = minimumAmount;
 
-		ctx.sentBundleTimestamp = performance.event("sent-bundle");
-		ctx.bundleData = bundleData;
-		ctx.jitoProxyUrl = jitoProxyUrl;
+			const { data: bundleData, proxyUrl: jitoProxyUrl } = await sendJitoBundle(
+				[arbTransaction, tipTransaction],
+			);
 
-		console.log("\x1b[33m%s\x1b[0m", bundleData.result);
+			ctx.sentBundleTimestamp = performance.event("sent-bundle");
+			ctx.bundleData = bundleData;
+			ctx.jitoProxyUrl = jitoProxyUrl;
 
-		ctx.sendTransactionTimestamp = performance.event("sent-transaction");
+			console.log("\x1b[33m%s\x1b[0m", bundleData.result);
+
+			ctx.sendTransactionTimestamp = performance.event("sent-transaction");
+		} else {
+			const signature = await connection.sendRawTransaction(
+				arbTransaction.serialize(),
+			);
+
+			performance.event("sent tx");
+			console.log(
+				"\x1b[33m%s\x1b[0m",
+				`sent transaction with signature ${signature}`,
+			);
+
+			ctx.arbTxSignature = signature;
+			ctx.sendTransactionTimestamp = performance.event("sent-transaction");
+
+			const blockhash = await connection.getLatestBlockhash();
+
+			const confirmation = await connection.confirmTransaction(
+				{
+					signature,
+					...blockhash,
+				},
+				"confirmed",
+			);
+
+			ctx.arbTxConfirmation = confirmation;
+
+			console.log(
+				"\x1b[33m%s\x1b[0m",
+				`transaction confirmed with status ${JSON.stringify(confirmation)}`,
+			);
+		}
 
 		// await logtail.success("sent transaction", ctx);
 

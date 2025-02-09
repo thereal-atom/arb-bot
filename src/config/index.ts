@@ -21,6 +21,7 @@ const envSchema = z.object({
 	ARB_CONFIG_AMOUNT_MINIMUM: zodNumeric,
 	ARB_CONFIG_AMOUNT_MAXIMUM: zodNumeric,
 	ARB_CONFIG_AMOUNT_FIXED: zodNumeric,
+	ARB_CONFIG_SEND_MODE: z.enum(["jito", "spam"]),
 
 	SUPABASE_URL: z.string().url(),
 	SUPABASE_SECRET_KEY: z.string(),
@@ -45,6 +46,7 @@ export const config = {
 	arbConfig: {
 		attemptInterval: env.ARB_CONFIG_ATTEMPT_INTERVAL,
 		shouldSimulate: env.ARB_CONFIG_SHOULD_SIMULATE,
+		sendMode: env.ARB_CONFIG_SEND_MODE,
 		amount: {
 			mode: env.ARB_CONFIG_AMOUNT_MODE,
 			minimum: env.ARB_CONFIG_AMOUNT_MINIMUM,
