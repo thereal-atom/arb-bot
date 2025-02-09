@@ -79,9 +79,9 @@ const runArb = async () => {
 			reverseQuote: reverseQuote.rawQuote,
 		};
 
-		const jitoTip = Math.floor(profitLamports * 0.9);
+		const jitoTip = Math.floor(profitLamports * 0.5);
 
-		const threshold = 500_000;
+		const threshold = 100_000;
 
 		ctx.main = {
 			arbConfig: config.arbConfig,
