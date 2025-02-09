@@ -154,7 +154,7 @@ export const constructArbitrageTransaction = async (
 
 	if (sendMode === "spam") {
 		const priorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
-			microLamports: 1_000,
+			microLamports: 10_000,
 		});
 		ixs.push(priorityFeeIx);
 	}
