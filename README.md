@@ -1,11 +1,3 @@
 # arb bot
 
-ETF500
-
-token: CWX6t6pGJ1zsnuywnyd2ZMZJ7inB2sWuPdsteoT6pump
-
-raydium lp: BEjPEZiTL2ndKEoHa8veyTNceCt5MzpaMZ8TdfpV7nBh
-meteora lp: EjGoLTS3xfHhE7UiJWCsds1gskVJezGrh2Y1bj8hpyN
-
-USDC: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
-JitoSOL: J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn
+bot for arbitrage on the Solana network. functional but unprofitable and unpolished.
